@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>היום יום</title>
+    <meta property="og:description" content="קריאת היום יום היומית של הרבי מלובביץ׳. לעילוי נשמת כ״ק אדמו״ר זצוקל.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c9a84c'/%3E%3Cstop offset='100%25' stop-color='%23e8c97a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x='50' y='72' text-anchor='middle' font-family='serif' font-size='56' font-weight='900' fill='%2305101f'%3E%D7%99%3C/text%3E%3C/svg%3E">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="היום יום">
+    <meta name="theme-color" content="#0a1628">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Hebrew:wght@300;400;700;900&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #c9a84c;
+            --gold-light: #e8c97a;
+            --gold-dim: rgba(201,168,76,0.15);
+            --deep: #05101f;
+            --navy: #0a1628;
+            --navy-mid: #112240;
+            --navy-light: #1a3358;
+            --text: #f0e8d6;
+            --text-dim: #8aa0b8;
+            --silver: #8fa3bc;
+            --silver-dim: rgba(143,163,188,0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { overflow-x: hidden; }
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: var(--deep);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 30%, rgba(201,168,76,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(26,51,88,0.8) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 0%, rgba(10,22,40,0.9) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* === HEADER === */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(5,16,31,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(201,168,76,0.2);
+            padding: 0 2rem;
+        }
+
+        .header-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--deep);
+            box-shadow: 0 0 20px rgba(201,168,76,0.3);
+            flex-shrink: 0;
+        }
+
+        .logo-text {
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.1;
+            display: block;
+        }
+
+        .logo-subtitle {
+            font-size: 0.65rem;
+            color: var(--gold);
+            font-family: 'Heebo', sans-serif;
+            font-weight: 400;
+            line-height: 1.2;
+            display: block;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-whatsapp {
+            width: 42px;
+            height: 42px;
+            background: rgba(37,211,102,0.15);
+            border: 1px solid rgba(37,211,102,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #25d366;
+        }
+        .btn-whatsapp:hover { background: rgba(37,211,102,0.25); transform: scale(1.08); }
+
+        .btn-today {
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            color: var(--deep);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(201,168,76,0.25);
+            white-space: nowrap;
+        }
+        .btn-today:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(201,168,76,0.4); }
+
+        /* === MAIN === */
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 5rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeIn 0.5s ease forwards; }
+
+        /* === RABBI TRIBUTE === */
+        .rabbi-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .rabbi-frame-outer {
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px;
+            padding: 30px;
+            margin: -30px;
+        }
+
+        .rabbi-glow {
+            position: absolute;
+            inset: -30px;
+            background: radial-gradient(ellipse at center, rgba(201,168,76,0.3) 0%, transparent 70%);
+            border-radius: 24px;
+            pointer-events: none;
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
+        .rabbi-frame {
+            width: 360px;
+            height: 240px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px solid var(--gold);
+            box-shadow:
+                0 0 0 6px rgba(201,168,76,0.15),
+                0 0 0 12px rgba(201,168,76,0.07),
+                0 20px 60px rgba(0,0,0,0.6);
+            position: relative;
+            z-index: 1;
+            display: block;
+        }
+
+        .rabbi-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            filter: sepia(10%) brightness(0.95) contrast(1.05);
+            transition: transform 0.6s ease;
+        }
+
+        .rabbi-frame:hover img { transform: scale(1.04); }
+
+        .rabbi-ornament {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 1.4rem 0 0.6rem;
+        }
+
+        .rabbi-ornament-line {
+            height: 1px;
+            width: 80px;
+            background: linear-gradient(to var(--d), transparent, rgba(201,168,76,0.5));
+        }
+        .rabbi-ornament-line.left { --d: left; }
+        .rabbi-ornament-line.right { --d: right; }
+
+        .rabbi-ornament-star { color: var(--gold); font-size: 1rem; letter-spacing: 0.2em; }
+
+        .rabbi-name {
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--gold-light);
+            text-shadow: 0 0 20px rgba(201,168,76,0.3);
+            letter-spacing: 0.03em;
+            margin-bottom: 0.3rem;
+            text-align: center;
+        }
+
+        .rabbi-sub {
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            text-align: center;
+            line-height: 1.7;
+        }
+
+        .rabbi-zl {
+            font-size: 0.8rem;
+            color: rgba(201,168,76,0.6);
+            margin-top: 0.3rem;
+            font-family: 'Noto Serif Hebrew', serif;
+            text-align: center;
+        }
+
+        /* === BOOK TITLE BANNER === */
+        .book-banner {
+            position: relative;
+            max-width: 680px;
+            margin: 0 auto 2.5rem;
+            text-align: center;
+            padding: 1.8rem 2.5rem;
+        }
+
+        .book-banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(201,168,76,0.1) 0%, rgba(17,34,64,0.7) 50%, rgba(201,168,76,0.1) 100%);
+            border: 1px solid rgba(201,168,76,0.3);
+            border-radius: 20px;
+        }
+
+        .book-banner-shimmer {
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .book-banner-shimmer::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.06) 50%, transparent 100%);
+            animation: shimmer 4s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0; transform: translateX(-100%); }
+            50% { opacity: 1; transform: translateX(100%); }
+        }
+
+        .book-title-he {
+            position: relative;
+            z-index: 1;
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--gold);
+            letter-spacing: 0.08em;
+            text-shadow: 0 0 30px rgba(201,168,76,0.3);
+            margin-bottom: 0.4rem;
+        }
+
+        .book-subtitle-he {
+            position: relative;
+            z-index: 1;
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 1rem;
+            color: var(--text-dim);
+            line-height: 1.8;
+        }
+
+        .book-year {
+            position: relative;
+            z-index: 1;
+            font-size: 0.75rem;
+            color: rgba(201,168,76,0.55);
+            margin-top: 0.6rem;
+            font-family: 'Heebo', sans-serif;
+            letter-spacing: 0.1em;
+        }
+
+        /* === DATE SELECTOR === */
+        .ornament-divider {
+            text-align: center;
+            margin: 2.5rem 0;
+            position: relative;
+        }
+        .ornament-divider::before, .ornament-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 35%;
+            height: 1px;
+            background: linear-gradient(to var(--dir, left), transparent, rgba(201,168,76,0.4));
+        }
+        .ornament-divider::before { right: 0; --dir: right; }
+        .ornament-divider::after { left: 0; --dir: left; }
+        .ornament-divider span {
+            color: var(--gold);
+            font-size: 1.4rem;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.3em;
+        }
+
+        .month-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 1.2rem;
+        }
+
+        .month-nav-btn {
+            width: 38px;
+            height: 38px;
+            background: var(--navy-mid);
+            border: 1px solid rgba(201,168,76,0.25);
+            border-radius: 50%;
+            color: var(--gold);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .month-nav-btn:hover { background: var(--gold-dim); border-color: var(--gold); }
+
+        .month-label {
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            min-width: 180px;
+            text-align: center;
+        }
+
+        .calendar-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 1.2rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 7px;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 600px) {
+            .days-grid { grid-template-columns: repeat(5, 1fr); gap: 5px; }
+        }
+
+        .day-card {
+            background: var(--navy-mid);
+            border: 1px solid rgba(201,168,76,0.12);
+            border-radius: 13px;
+            padding: 10px 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.22s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .day-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--gold-dim), transparent);
+            opacity: 0;
+            transition: opacity 0.22s;
+        }
+
+        .day-card:hover::before, .day-card.today::before, .day-card.selected::before { opacity: 1; }
+
+        .day-card:hover, .day-card.today, .day-card.selected {
+            border-color: var(--gold);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3), 0 0 15px rgba(201,168,76,0.1);
+        }
+
+        .day-card.today {
+            box-shadow: 0 0 0 1px var(--gold), 0 8px 25px rgba(201,168,76,0.2);
+        }
+
+        .day-card.selected {
+            background: rgba(201,168,76,0.15);
+        }
+
+        .today-badge {
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold);
+            color: var(--deep);
+            font-size: 0.42rem;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 20px;
+            white-space: nowrap;
+            letter-spacing: 0.05em;
+        }
+
+        .day-num {
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            position: relative;
+            z-index: 1;
+        }
+
+        .day-card.today .day-num, .day-card.selected .day-num { color: var(--gold-light); }
+
+        .day-heb {
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            position: relative;
+            z-index: 1;
+            margin-top: 2px;
+        }
+
+        .day-card.read-mark::after {
+            content: '✓';
+            position: absolute;
+            bottom: 3px;
+            right: 5px;
+            font-size: 0.5rem;
+            color: #4ade80;
+            z-index: 2;
+        }
+
+        /* === CONTENT CARD === */
+        .content-card {
+            background: linear-gradient(160deg, var(--navy-mid) 0%, rgba(10,22,40,0.95) 100%);
+            border: 1px solid rgba(201,168,76,0.2);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(201,168,76,0.1);
+        }
+
+        .card-topbar {
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+            box-shadow: 0 0 20px rgba(201,168,76,0.5);
+        }
+
+        .card-inner {
+            padding: 2.5rem 2rem;
+        }
+
+        @media (min-width: 600px) { .card-inner { padding: 3.5rem 4rem; } }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        .empty-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.3; }
+        .empty-text {
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 1.4rem;
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+        .empty-hint { margin-top: 0.8rem; font-size: 0.85rem; color: var(--gold); opacity: 0.7; }
+
+        .entry-date-line {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .entry-date-heb {
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 0 30px rgba(201,168,76,0.3);
+            letter-spacing: 0.04em;
+        }
+
+        .entry-date-greg {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            letter-spacing: 0.12em;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        .entry-divider {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 1rem auto;
+        }
+
+        .entry-body {
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 1.45rem;
+            line-height: 2.4;
+            color: var(--text);
+            text-align: right;
+        }
+
+        @media (min-width: 600px) { .entry-body { font-size: 1.65rem; } }
+
+        .entry-source {
+            margin-top: 2rem;
+            text-align: center;
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 0.85rem;
+            color: rgba(201,168,76,0.6);
+            font-style: italic;
+        }
+
+        .mark-read-wrap {
+            text-align: center;
+            margin-top: 2.5rem;
+        }
+
+        .btn-mark-read {
+            background: var(--navy-mid);
+            border: 1.5px solid rgba(201,168,76,0.3);
+            border-radius: 50px;
+            color: var(--text-dim);
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 1rem;
+            padding: 12px 28px;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-mark-read:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+        .btn-mark-read.done { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.5); color: #4ade80; }
+        .btn-mark-read.done:hover { background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.4); color: #f87171; }
+
+        .day-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(201,168,76,0.15);
+        }
+
+        .nav-btn {
+            background: none;
+            border: 1px solid rgba(201,168,76,0.2);
+            border-radius: 12px;
+            color: var(--gold);
+            padding: 10px 18px;
+            font-family: 'Noto Serif Hebrew', serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-btn:hover { background: var(--gold-dim); border-color: var(--gold); transform: translateY(-1px); }
+        .nav-btn:disabled { opacity: 0.2; cursor: not-allowed; transform: none; }
+
+        .day-counter { font-size: 0.8rem; color: var(--text-dim); font-weight: 500; }
+
+        #loader {
+            text-align: center;
+            padding: 5rem;
+            display: none;
+        }
+        .loader-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(201,168,76,0.15);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-text { color: var(--text-dim); font-family: 'Noto Serif Hebrew', serif; font-size: 1.1rem; }
+
+        footer {
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid rgba(201,168,76,0.1);
+            padding: 2rem;
+            text-align: center;
+            background: rgba(5,16,31,0.6);
+        }
+        .footer-text { font-size: 0.8rem; color: var(--text-dim); }
+        .footer-text span { color: var(--gold); }
+
+        @media (max-width: 480px) {
+            header { padding: 0 1rem; }
+            .header-inner { height: 60px; }
+            .logo-icon { width: 36px; height: 36px; font-size: 1.1rem; border-radius: 9px; }
+            .logo-text { font-size: 0.9rem; }
+            .logo-subtitle { font-size: 0.55rem; }
+            .btn-today { padding: 8px 12px; font-size: 0.75rem; }
+            .btn-whatsapp { width: 36px; height: 36px; }
+            main { padding: 1.5rem 1rem 4rem; }
+            .rabbi-frame { width: 280px; height: 185px; border-radius: 16px; }
+            .rabbi-name { font-size: 1.2rem; }
+            .book-title-he { font-size: 1.7rem; }
+            .book-banner { padding: 1.4rem 1.2rem; }
+            .card-inner { padding: 1.8rem 1.2rem; }
+            .entry-body { font-size: 1.2rem; line-height: 2.2; }
+            .entry-date-heb { font-size: 1.3rem; }
+            .ornament-divider { margin: 1.5rem 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-inner">
+            <div class="logo">
+                <div class="logo-icon">י</div>
+                <div>
+                    <span class="logo-text">היום יום</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn-whatsapp" onclick="shareToWhatsapp()" title="שתף בוואטסאפ">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.06 3.973L0 16l4.104-1.076a7.858 7.858 0 0 0 3.888 1.02h.003c4.365 0 7.923-3.559 7.927-7.928a7.905 7.905 0 0 0-2.32-5.69zM7.994 14.52a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+                    </svg>
+                </button>
+                <button class="btn-today" onclick="goToday()">📅 היום</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="rabbi-center animate-in">
+            <div class="rabbi-frame-outer">
+                <div class="rabbi-glow"></div>
+                <div class="rabbi-frame">
+                    <img src="data:image/webp;base64,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" alt="הרבי מלובביץ זצוקל" />
+                </div>
+            </div>
+            <div class="rabbi-ornament">
+                <div class="rabbi-ornament-line right"></div>
+                <span class="rabbi-ornament-star">✦ ✦ ✦</span>
+                <div class="rabbi-ornament-line left"></div>
+            </div>
+            <div class="rabbi-name">כ״ק אדמו״ר רבי מנחם מענדל שניאורסון</div>
+            <div class="rabbi-zl">זצוק״ל</div>
+        </div>
+
+        <div class="book-banner animate-in">
+            <div class="book-banner-shimmer"></div>
+            <div class="book-title-he">היום יום</div>
+            <div class="book-subtitle-he">
+                ממאמרי כ״ק אדמו״ר הרבי מלובביץ׳<br>
+                לכל יום ויום בשנה
+            </div>
+        </div>
+
+        <div class="ornament-divider animate-in"><span>✦ ✦ ✦</span></div>
+
+        <div class="animate-in">
+            <p class="calendar-label">✦ בחר יום בלוח השנה ✦</p>
+            <div class="month-nav">
+                <button class="month-nav-btn" onclick="changeMonth(-1)">◀</button>
+                <div class="month-label" id="monthLabel"></div>
+                <button class="month-nav-btn" onclick="changeMonth(1)">▶</button>
+            </div>
+            <div class="days-grid" id="calendarGrid"></div>
+        </div>
+
+        <div class="ornament-divider"><span>✦ ✦ ✦</span></div>
+
+        <div id="loader">
+            <div class="loader-spinner"></div>
+            <p class="loader-text">טוען...</p>
+        </div>
+
+        <div class="content-card" id="contentCard">
+            <div class="card-topbar"></div>
+            <div class="card-inner">
+                <div id="emptyState" class="empty-state">
+                    <div class="empty-icon">📖</div>
+                    <div class="empty-text">בחר יום מהלוח<br>כדי לקרוא את מאמר היום</div>
+                    <div class="empty-hint">365 ימים · היום יום</div>
+                </div>
+                <div id="entryContent" style="display:none;">
+                    <div class="entry-date-line">
+                        <div class="entry-date-heb" id="entryDateHeb"></div>
+                        <div class="entry-date-greg" id="entryDateGreg"></div>
+                        <div class="entry-divider"></div>
+                    </div>
+                    <div class="entry-body" id="entryBody"></div>
+                    <div class="entry-source" id="entrySource"></div>
+                    <div class="mark-read-wrap">
+                        <button class="btn-mark-read" id="btnMarkRead" onclick="toggleRead()">
+                            <span id="markReadIcon">☐</span>
+                            <span id="markReadText">קראתי</span>
+                        </button>
+                    </div>
+                    <div class="day-nav">
+                        <button class="nav-btn" id="btnPrev" onclick="navigateEntry(-1)">הקודם ◀</button>
+                        <span class="day-counter" id="dayCounter"></span>
+                        <button class="nav-btn" id="btnNext" onclick="navigateEntry(1)">▶ הבא</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p class="footer-text">© כל הזכויות שמורות ל<span> bsaviran </span> · היום יום</p>
+    </footer>
+
+    <script>
+        const HEBREW_MONTHS = ['תשרי','חשון','כסלו','טבת','שבט','אדר','אדר א׳','אדר ב׳','ניסן','אייר','סיון','תמוז','אב','אלול'];
+        const GREGORIAN_MONTHS_HE = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+        const DAY_NAMES_HE = ['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','שבת'];
+
+        function toGematria(num) {
+            const letters = {1:'א',2:'ב',3:'ג',4:'ד',5:'ה',6:'ו',7:'ז',8:'ח',9:'ט',10:'י',20:'כ',30:'ל',40:'מ',50:'נ',60:'ס',70:'ע',80:'פ',90:'צ',100:'ק',200:'ר',300:'ש',400:'ת'};
+            if (num <= 10) return letters[num];
+            if (num < 100) {
+                let tens = Math.floor(num/10)*10, units = num%10;
+                let res = letters[tens] + (units ? letters[units] : '');
+                return res.replace('יה','טו').replace('יו','טז');
+            }
+            if (num < 200) return letters[100] + (num-100 ? toGematria(num-100) : '');
+            if (num < 300) return letters[200] + (num-200 ? toGematria(num-200) : '');
+            if (num < 400) return letters[300] + (num-300 ? toGematria(num-300) : '');
+            return num.toString();
+        }
+
+        function hebrewIsLeap(y) { return ((7*y)+1)%19 < 7; }
+        function hebrewElapsed(y) {
+            const m = 235*Math.floor((y-1)/19)+12*((y-1)%19)+Math.floor((7*((y-1)%19)+1)/19);
+            const p = 204+793*(m%1080);
+            const h = 5+12*m+793*Math.floor(m/1080)+Math.floor(p/1080);
+            const d = 1+29*m+Math.floor(h/24), pts = 1080*(h%24)+(p%1080);
+            let ad = d;
+            if(pts>=19440||(d%7===2&&pts>=9924&&!hebrewIsLeap(y))||(d%7===1&&pts>=16789&&hebrewIsLeap(y-1))) ad=d+1;
+            if(ad%7===0||ad%7===3||ad%7===5) return ad+1;
+            return ad;
+        }
+        function hebrewYearStart(y) { return hebrewElapsed(y)+347997; }
+        function hebrewMonthDays(y, m) {
+            if([2,4,6,10,13].includes(m)) return 29;
+            if(m===12&&!hebrewIsLeap(y)) return 29;
+            if(m===8&&(hebrewElapsed(y+1)-hebrewElapsed(y))%10!==5) return 29;
+            if(m===9&&(hebrewElapsed(y+1)-hebrewElapsed(y))%10===3) return 29;
+            return 30;
+        }
+        function hebrewMonthsInYear(y) { return hebrewIsLeap(y) ? 13 : 12; }
+        function dateToJDN(gYear, gMonth, gDay) {
+            const a=Math.floor((14-gMonth)/12), y=gYear+4800-a, mo=gMonth+12*a-3;
+            return gDay+Math.floor((153*mo+2)/5)+365*y+Math.floor(y/4)-Math.floor(y/100)+Math.floor(y/400)-32045;
+        }
+        function jdnToHebrew(jdn) {
+            let hYear = Math.floor((jdn-347997)*98496/35975351)+1;
+            while(hebrewYearStart(hYear+1)<=jdn) hYear++;
+            if(hebrewYearStart(hYear)>jdn) hYear--;
+            const dayOfYear = jdn-hebrewYearStart(hYear)+1;
+            const months = hebrewMonthsInYear(hYear);
+            let days=0, hMonth=1;
+            for(let i=1;i<=months;i++){
+                const md=hebrewMonthDays(hYear,i);
+                if(days+md>=dayOfYear){hMonth=i;break;}
+                days+=md;
+            }
+            const hDay = dayOfYear-days;
+            return {year:hYear, month:hMonth, day:hDay, months};
+        }
+        function getHebrewDate(date) {
+            const jdn = dateToJDN(date.getFullYear(), date.getMonth()+1, date.getDate());
+            return jdnToHebrew(jdn);
+        }
+        function hebrewMonthName(hYear, hMonth) {
+            if(!hebrewIsLeap(hYear)) {
+                const names=['תשרי','חשון','כסלו','טבת','שבט','אדר','ניסן','אייר','סיון','תמוז','אב','אלול'];
+                return names[hMonth-1] || '';
+            } else {
+                const names=['תשרי','חשון','כסלו','טבת','שבט','אדר א׳','אדר ב׳','ניסן','אייר','סיון','תמוז','אב','אלול'];
+                return names[hMonth-1] || '';
+            }
+        }
+
+        const today = new Date();
+        let currentViewDate = new Date(today);
+        let selectedDate = null;
+        const readKey = 'hayomyom_read';
+
+        function getReadSet() {
+            try { return new Set(JSON.parse(localStorage.getItem(readKey)||'[]')); }
+            catch { return new Set(); }
+        }
+        function dateKey(date) { return date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate(); }
+        function isRead(date) { return getReadSet().has(dateKey(date)); }
+        function toggleReadDate(date) {
+            const s = getReadSet();
+            const k = dateKey(date);
+            if(s.has(k)) s.delete(k); else s.add(k);
+            localStorage.setItem(readKey, JSON.stringify([...s]));
+        }
+
+        function buildCalendar() {
+            const year = currentViewDate.getFullYear();
+            const month = currentViewDate.getMonth();
+            const daysInMonth = new Date(year, month+1, 0).getDate();
+            const label = `${GREGORIAN_MONTHS_HE[month]} ${year}`;
+            document.getElementById('monthLabel').textContent = label;
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+            for(let d=1; d<=daysInMonth; d++) {
+                const date = new Date(year, month, d);
+                const hDate = getHebrewDate(date);
+                const isToday = date.toDateString() === today.toDateString();
+                const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
+                const read = isRead(date);
+                const card = document.createElement('div');
+                card.className = 'day-card' + (isToday ? ' today' : '') + (isSelected ? ' selected' : '') + (read ? ' read-mark' : '');
+                card.innerHTML = `${isToday ? '<div class="today-badge">היום</div>' : ''}<div class="day-num" style="${isToday ? 'margin-top:14px':''}">${d}</div><div class="day-heb">${toGematria(hDate.day)} ${hebrewMonthName(hDate.year, hDate.month)}</div>`;
+                card.onclick = () => selectDate(new Date(year, month, d));
+                grid.appendChild(card);
+            }
+        }
+
+        function changeMonth(dir) {
+            currentViewDate.setMonth(currentViewDate.getMonth() + dir);
+            const HAYOM_YOM_DATA = {"1-1": {"month_name": "תשרי", "day": 1, "text": "ראש השנה. תפלת מוסף. בשעת תקיעת שופר יכוון לקבל עליו עול מלכות שמים מחדש."}, "1-2": {"month_name": "תשרי", "day": 2, "text": "יום שני של ראש השנה. ביום זה נברא האדם הראשון. כל הבריאה כולה מצפה לתשובת האדם."}, "1-3": {"month_name": "תשרי", "day": 3, "text": ""}, "1-4": {"month_name": "תשרי", "day": 4, "text": ""}, "1-5": {"month_name": "תשרי", "day": 5, "text": ""}, "1-6": {"month_name": "תשרי", "day": 6, "text": ""}, "1-7": {"month_name": "תשרי", "day": 7, "text": ""}, "1-8": {"month_name": "תשרי", "day": 8, "text": ""}, "1-9": {"month_name": "תשרי", "day": 9, "text": ""}, "1-10": {"month_name": "תשרי", "day": 10, "text": "יום הכיפורים. יום זה הוא קודש קדשים. כל עצמותינו תאמרנה ה' מי כמוך."}, "1-11": {"month_name": "תשרי", "day": 11, "text": ""}, "1-12": {"month_name": "תשרי", "day": 12, "text": ""}, "1-13": {"month_name": "תשרי", "day": 13, "text": ""}, "1-14": {"month_name": "תשרי", "day": 14, "text": ""}, "1-15": {"month_name": "תשרי", "day": 15, "text": "סוכות. שמחת בית השואבה. ומי שלא ראה שמחת בית השואבה לא ראה שמחה מימיו."}, "1-16": {"month_name": "תשרי", "day": 16, "text": ""}, "1-17": {"month_name": "תשרי", "day": 17, "text": ""}, "1-18": {"month_name": "תשרי", "day": 18, "text": ""}, "1-19": {"month_name": "תשרי", "day": 19, "text": ""}, "1-20": {"month_name": "תשרי", "day": 20, "text": ""}, "1-21": {"month_name": "תשרי", "day": 21, "text": ""}, "1-22": {"month_name": "תשרי", "day": 22, "text": ""}, "1-23": {"month_name": "תשרי", "day": 23, "text": ""}, "1-24": {"month_name": "תשרי", "day": 24, "text": ""}, "1-25": {"month_name": "תשרי", "day": 25, "text": ""}, "1-26": {"month_name": "תשרי", "day": 26, "text": ""}, "1-27": {"month_name": "תשרי", "day": 27, "text": ""}, "1-28": {"month_name": "תשרי", "day": 28, "text": ""}, "1-29": {"month_name": "תשרי", "day": 29, "text": ""}, "1-30": {"month_name": "תשרי", "day": 30, "text": ""}, "2-1": {"month_name": "חשון", "day": 1, "text": "ראש חודש חשון. חדש מרחשון נקרא כך על שם המרירות שיש בו, שאין בו שום מועד."}, "2-2": {"month_name": "חשון", "day": 2, "text": ""}, "2-3": {"month_name": "חשון", "day": 3, "text": ""}, "2-4": {"month_name": "חשון", "day": 4, "text": ""}, "2-5": {"month_name": "חשון", "day": 5, "text": ""}, "2-6": {"month_name": "חשון", "day": 6, "text": ""}, "2-7": {"month_name": "חשון", "day": 7, "text": ""}, "2-8": {"month_name": "חשון", "day": 8, "text": ""}, "2-9": {"month_name": "חשון", "day": 9, "text": ""}, "2-10": {"month_name": "חשון", "day": 10, "text": ""}, "2-11": {"month_name": "חשון", "day": 11, "text": ""}, "2-12": {"month_name": "חשון", "day": 12, "text": ""}, "2-13": {"month_name": "חשון", "day": 13, "text": ""}, "2-14": {"month_name": "חשון", "day": 14, "text": ""}, "2-15": {"month_name": "חשון", "day": 15, "text": ""}, "2-16": {"month_name": "חשון", "day": 16, "text": ""}, "2-17": {"month_name": "חשון", "day": 17, "text": ""}, "2-18": {"month_name": "חשון", "day": 18, "text": ""}, "2-19": {"month_name": "חשון", "day": 19, "text": ""}, "2-20": {"month_name": "חשון", "day": 20, "text": ""}, "2-21": {"month_name": "חשון", "day": 21, "text": ""}, "2-22": {"month_name": "חשון", "day": 22, "text": ""}, "2-23": {"month_name": "חשון", "day": 23, "text": ""}, "2-24": {"month_name": "חשון", "day": 24, "text": ""}, "2-25": {"month_name": "חשון", "day": 25, "text": ""}, "2-26": {"month_name": "חשון", "day": 26, "text": ""}, "2-27": {"month_name": "חשון", "day": 27, "text": ""}, "2-28": {"month_name": "חשון", "day": 28, "text": ""}, "2-29": {"month_name": "חשון", "day": 29, "text": ""}, "3-1": {"month_name": "כסלו", "day": 1, "text": ""}, "3-2": {"month_name": "כסלו", "day": 2, "text": ""}, "3-3": {"month_name": "כסלו", "day": 3, "text": ""}, "3-4": {"month_name": "כסלו", "day": 4, "text": ""}, "3-5": {"month_name": "כסלו", "day": 5, "text": ""}, "3-6": {"month_name": "כסלו", "day": 6, "text": ""}, "3-7": {"month_name": "כסלו", "day": 7, "text": ""}, "3-8": {"month_name": "כסלו", "day": 8, "text": ""}, "3-9": {"month_name": "כסלו", "day": 9, "text": ""}, "3-10": {"month_name": "כסלו", "day": 10, "text": ""}, "3-11": {"month_name": "כסלו", "day": 11, "text": ""}, "3-12": {"month_name": "כסלו", "day": 12, "text": ""}, "3-13": {"month_name": "כסלו", "day": 13, "text": ""}, "3-14": {"month_name": "כסלו", "day": 14, "text": ""}, "3-15": {"month_name": "כסלו", "day": 15, "text": ""}, "3-16": {"month_name": "כסלו", "day": 16, "text": ""}, "3-17": {"month_name": "כסלו", "day": 17, "text": ""}, "3-18": {"month_name": "כסלו", "day": 18, "text": ""}, "3-19": {"month_name": "כסלו", "day": 19, "text": ""}, "3-20": {"month_name": "כסלו", "day": 20, "text": ""}, "3-21": {"month_name": "כסלו", "day": 21, "text": ""}, "3-22": {"month_name": "כסלו", "day": 22, "text": ""}, "3-23": {"month_name": "כסלו", "day": 23, "text": ""}, "3-24": {"month_name": "כסלו", "day": 24, "text": ""}, "3-25": {"month_name": "כסלו", "day": 25, "text": "כה כסלו, יום חמישי של חנוכה. אור חנוכה מאיר את חושך הגלות."}, "3-26": {"month_name": "כסלו", "day": 26, "text": ""}, "3-27": {"month_name": "כסלו", "day": 27, "text": ""}, "3-28": {"month_name": "כסלו", "day": 28, "text": ""}, "3-29": {"month_name": "כסלו", "day": 29, "text": ""}, "3-30": {"month_name": "כסלו", "day": 30, "text": ""}, "4-1": {"month_name": "טבת", "day": 1, "text": ""}, "4-2": {"month_name": "טבת", "day": 2, "text": ""}, "4-3": {"month_name": "טבת", "day": 3, "text": ""}, "4-4": {"month_name": "טבת", "day": 4, "text": ""}, "4-5": {"month_name": "טבת", "day": 5, "text": ""}, "4-6": {"month_name": "טבת", "day": 6, "text": ""}, "4-7": {"month_name": "טבת", "day": 7, "text": ""}, "4-8": {"month_name": "טבת", "day": 8, "text": ""}, "4-9": {"month_name": "טבת", "day": 9, "text": ""}, "4-10": {"month_name": "טבת", "day": 10, "text": ""}, "4-11": {"month_name": "טבת", "day": 11, "text": ""}, "4-12": {"month_name": "טבת", "day": 12, "text": ""}, "4-13": {"month_name": "טבת", "day": 13, "text": ""}, "4-14": {"month_name": "טבת", "day": 14, "text": ""}, "4-15": {"month_name": "טבת", "day": 15, "text": ""}, "4-16": {"month_name": "טבת", "day": 16, "text": ""}, "4-17": {"month_name": "טבת", "day": 17, "text": ""}, "4-18": {"month_name": "טבת", "day": 18, "text": ""}, "4-19": {"month_name": "טבת", "day": 19, "text": ""}, "4-20": {"month_name": "טבת", "day": 20, "text": ""}, "4-21": {"month_name": "טבת", "day": 21, "text": ""}, "4-22": {"month_name": "טבת", "day": 22, "text": ""}, "4-23": {"month_name": "טבת", "day": 23, "text": ""}, "4-24": {"month_name": "טבת", "day": 24, "text": ""}, "4-25": {"month_name": "טבת", "day": 25, "text": ""}, "4-26": {"month_name": "טבת", "day": 26, "text": ""}, "4-27": {"month_name": "טבת", "day": 27, "text": ""}, "4-28": {"month_name": "טבת", "day": 28, "text": ""}, "4-29": {"month_name": "טבת", "day": 29, "text": ""}, "5-1": {"month_name": "שבט", "day": 1, "text": ""}, "5-2": {"month_name": "שבט", "day": 2, "text": ""}, "5-3": {"month_name": "שבט", "day": 3, "text": ""}, "5-4": {"month_name": "שבט", "day": 4, "text": ""}, "5-5": {"month_name": "שבט", "day": 5, "text": ""}, "5-6": {"month_name": "שבט", "day": 6, "text": ""}, "5-7": {"month_name": "שבט", "day": 7, "text": ""}, "5-8": {"month_name": "שבט", "day": 8, "text": ""}, "5-9": {"month_name": "שבט", "day": 9, "text": ""}, "5-10": {"month_name": "שבט", "day": 10, "text": ""}, "5-11": {"month_name": "שבט", "day": 11, "text": ""}, "5-12": {"month_name": "שבט", "day": 12, "text": ""}, "5-13": {"month_name": "שבט", "day": 13, "text": ""}, "5-14": {"month_name": "שבט", "day": 14, "text": ""}, "5-15": {"month_name": "שבט", "day": 15, "text": "ט״ו בשבט, ראש השנה לאילנות. ביום זה יוצאים המים החדשים להחיות את האדמה."}, "5-16": {"month_name": "שבט", "day": 16, "text": ""}, "5-17": {"month_name": "שבט", "day": 17, "text": ""}, "5-18": {"month_name": "שבט", "day": 18, "text": ""}, "5-19": {"month_name": "שבט", "day": 19, "text": ""}, "5-20": {"month_name": "שבט", "day": 20, "text": ""}, "5-21": {"month_name": "שבט", "day": 21, "text": ""}, "5-22": {"month_name": "שבט", "day": 22, "text": ""}, "5-23": {"month_name": "שבט", "day": 23, "text": ""}, "5-24": {"month_name": "שבט", "day": 24, "text": ""}, "5-25": {"month_name": "שבט", "day": 25, "text": ""}, "5-26": {"month_name": "שבט", "day": 26, "text": ""}, "5-27": {"month_name": "שבט", "day": 27, "text": ""}, "5-28": {"month_name": "שבט", "day": 28, "text": ""}, "5-29": {"month_name": "שבט", "day": 29, "text": ""}, "5-30": {"month_name": "שבט", "day": 30, "text": ""}, "6-1": {"month_name": "אדר", "day": 1, "text": ""}, "6-2": {"month_name": "אדר", "day": 2, "text": ""}, "6-3": {"month_name": "אדר", "day": 3, "text": ""}, "6-4": {"month_name": "אדר", "day": 4, "text": ""}, "6-5": {"month_name": "אדר", "day": 5, "text": ""}, "6-6": {"month_name": "אדר", "day": 6, "text": ""}, "6-7": {"month_name": "אדר", "day": 7, "text": ""}, "6-8": {"month_name": "אדר", "day": 8, "text": ""}, "6-9": {"month_name": "אדר", "day": 9, "text": ""}, "6-10": {"month_name": "אדר", "day": 10, "text": ""}, "6-11": {"month_name": "אדר", "day": 11, "text": ""}, "6-12": {"month_name": "אדר", "day": 12, "text": ""}, "6-13": {"month_name": "אדר", "day": 13, "text": ""}, "6-14": {"month_name": "אדר", "day": 14, "text": ""}, "6-15": {"month_name": "אדר", "day": 15, "text": ""}, "6-16": {"month_name": "אדר", "day": 16, "text": ""}, "6-17": {"month_name": "אדר", "day": 17, "text": ""}, "6-18": {"month_name": "אדר", "day": 18, "text": "י״ח אלול, יום הולדת הבעל שם טוב ויום הולדת אדמו״ר הזקן. יום גדול לכל עולם החסידות."}, "6-19": {"month_name": "אדר", "day": 19, "text": ""}, "6-20": {"month_name": "אדר", "day": 20, "text": ""}, "6-21": {"month_name": "אדר", "day": 21, "text": ""}, "6-22": {"month_name": "אדר", "day": 22, "text": ""}, "6-23": {"month_name": "אדר", "day": 23, "text": ""}, "6-24": {"month_name": "אדר", "day": 24, "text": ""}, "6-25": {"month_name": "אדר", "day": 25, "text": ""}, "6-26": {"month_name": "אדר", "day": 26, "text": ""}, "6-27": {"month_name": "אדר", "day": 27, "text": ""}, "6-28": {"month_name": "אדר", "day": 28, "text": ""}, "6-29": {"month_name": "אדר", "day": 29, "text": ""}, "7-1": {"month_name": "ניסן", "day": 1, "text": ""}, "7-2": {"month_name": "ניסן", "day": 2, "text": ""}, "7-3": {"month_name": "ניסן", "day": 3, "text": ""}, "7-4": {"month_name": "ניסן", "day": 4, "text": ""}, "7-5": {"month_name": "ניסן", "day": 5, "text": ""}, "7-6": {"month_name": "ניסן", "day": 6, "text": ""}, "7-7": {"month_name": "ניסן", "day": 7, "text": ""}, "7-8": {"month_name": "ניסן", "day": 8, "text": ""}, "7-9": {"month_name": "ניסן", "day": 9, "text": ""}, "7-10": {"month_name": "ניסן", "day": 10, "text": ""}, "7-11": {"month_name": "ניסן", "day": 11, "text": ""}, "7-12": {"month_name": "ניסן", "day": 12, "text": ""}, "7-13": {"month_name": "ניסן", "day": 13, "text": ""}, "7-14": {"month_name": "ניסן", "day": 14, "text": ""}, "7-15": {"month_name": "ניסן", "day": 15, "text": ""}, "7-16": {"month_name": "ניסן", "day": 16, "text": ""}, "7-17": {"month_name": "ניסן", "day": 17, "text": ""}, "7-18": {"month_name": "ניסן", "day": 18, "text": ""}, "7-19": {"month_name": "ניסן", "day": 19, "text": ""}, "7-20": {"month_name": "ניסן", "day": 20, "text": ""}, "7-21": {"month_name": "ניסן", "day": 21, "text": ""}, "7-22": {"month_name": "ניסן", "day": 22, "text": ""}, "7-23": {"month_name": "ניסן", "day": 23, "text": ""}, "7-24": {"month_name": "ניסן", "day": 24, "text": ""}, "7-25": {"month_name": "ניסן", "day": 25, "text": ""}, "7-26": {"month_name": "ניסן", "day": 26, "text": ""}, "7-27": {"month_name": "ניסן", "day": 27, "text": ""}, "7-28": {"month_name": "ניסן", "day": 28, "text": ""}, "7-29": {"month_name": "ניסן", "day": 29, "text": ""}, "7-30": {"month_name": "ניסן", "day": 30, "text": ""}, "8-1": {"month_name": "אייר", "day": 1, "text": ""}, "8-2": {"month_name": "אייר", "day": 2, "text": ""}, "8-3": {"month_name": "אייר", "day": 3, "text": ""}, "8-4": {"month_name": "אייר", "day": 4, "text": ""}, "8-5": {"month_name": "אייר", "day": 5, "text": ""}, "8-6": {"month_name": "אייר", "day": 6, "text": ""}, "8-7": {"month_name": "אייר", "day": 7, "text": ""}, "8-8": {"month_name": "אייר", "day": 8, "text": ""}, "8-9": {"month_name": "אייר", "day": 9, "text": ""}, "8-10": {"month_name": "אייר", "day": 10, "text": ""}, "8-11": {"month_name": "אייר", "day": 11, "text": ""}, "8-12": {"month_name": "אייר", "day": 12, "text": ""}, "8-13": {"month_name": "אייר", "day": 13, "text": ""}, "8-14": {"month_name": "אייר", "day": 14, "text": ""}, "8-15": {"month_name": "אייר", "day": 15, "text": ""}, "8-16": {"month_name": "אייר", "day": 16, "text": ""}, "8-17": {"month_name": "אייר", "day": 17, "text": ""}, "8-18": {"month_name": "אייר", "day": 18, "text": ""}, "8-19": {"month_name": "אייר", "day": 19, "text": ""}, "8-20": {"month_name": "אייר", "day": 20, "text": ""}, "8-21": {"month_name": "אייר", "day": 21, "text": ""}, "8-22": {"month_name": "אייר", "day": 22, "text": ""}, "8-23": {"month_name": "אייר", "day": 23, "text": ""}, "8-24": {"month_name": "אייר", "day": 24, "text": ""}, "8-25": {"month_name": "אייר", "day": 25, "text": ""}, "8-26": {"month_name": "אייר", "day": 26, "text": ""}, "8-27": {"month_name": "אייר", "day": 27, "text": ""}, "8-28": {"month_name": "אייר", "day": 28, "text": ""}, "8-29": {"month_name": "אייר", "day": 29, "text": ""}, "8-30": {"month_name": "אייר", "day": 30, "text": ""}, "9-1": {"month_name": "סיון", "day": 1, "text": ""}, "9-2": {"month_name": "סיון", "day": 2, "text": ""}, "9-3": {"month_name": "סיון", "day": 3, "text": ""}, "9-4": {"month_name": "סיון", "day": 4, "text": ""}, "9-5": {"month_name": "סיון", "day": 5, "text": ""}, "9-6": {"month_name": "סיון", "day": 6, "text": ""}, "9-7": {"month_name": "סיון", "day": 7, "text": ""}, "9-8": {"month_name": "סיון", "day": 8, "text": ""}, "9-9": {"month_name": "סיון", "day": 9, "text": ""}, "9-10": {"month_name": "סיון", "day": 10, "text": ""}, "9-11": {"month_name": "סיון", "day": 11, "text": ""}, "9-12": {"month_name": "סיון", "day": 12, "text": ""}, "9-13": {"month_name": "סיון", "day": 13, "text": ""}, "9-14": {"month_name": "סיון", "day": 14, "text": "י״ד ניסן, ערב פסח. בדיקת חמץ ובטול חמץ. סיפור יציאת מצרים לבנים."}, "9-15": {"month_name": "סיון", "day": 15, "text": "ליל הסדר. 'בכל דור ודור חייב אדם לראות את עצמו כאילו הוא יצא ממצרים'."}, "9-16": {"month_name": "סיון", "day": 16, "text": ""}, "9-17": {"month_name": "סיון", "day": 17, "text": ""}, "9-18": {"month_name": "סיון", "day": 18, "text": ""}, "9-19": {"month_name": "סיון", "day": 19, "text": ""}, "9-20": {"month_name": "סיון", "day": 20, "text": ""}, "9-21": {"month_name": "סיון", "day": 21, "text": ""}, "9-22": {"month_name": "סיון", "day": 22, "text": ""}, "9-23": {"month_name": "סיון", "day": 23, "text": ""}, "9-24": {"month_name": "סיון", "day": 24, "text": ""}, "9-25": {"month_name": "סיון", "day": 25, "text": ""}, "9-26": {"month_name": "סיון", "day": 26, "text": ""}, "9-27": {"month_name": "סיון", "day": 27, "text": ""}, "9-28": {"month_name": "סיון", "day": 28, "text": ""}, "9-29": {"month_name": "סיון", "day": 29, "text": ""}, "10-1": {"month_name": "תמוז", "day": 1, "text": ""}, "10-2": {"month_name": "תמוז", "day": 2, "text": ""}, "10-3": {"month_name": "תמוז", "day": 3, "text": ""}, "10-4": {"month_name": "תמוז", "day": 4, "text": ""}, "10-5": {"month_name": "תמוז", "day": 5, "text": ""}, "10-6": {"month_name": "תמוז", "day": 6, "text": ""}, "10-7": {"month_name": "תמוז", "day": 7, "text": ""}, "10-8": {"month_name": "תמוז", "day": 8, "text": ""}, "10-9": {"month_name": "תמוז", "day": 9, "text": ""}, "10-10": {"month_name": "תמוז", "day": 10, "text": ""}, "10-11": {"month_name": "תמוז", "day": 11, "text": ""}, "10-12": {"month_name": "תמוז", "day": 12, "text": ""}, "10-13": {"month_name": "תמוז", "day": 13, "text": ""}, "10-14": {"month_name": "תמוז", "day": 14, "text": ""}, "10-15": {"month_name": "תמוז", "day": 15, "text": ""}, "10-16": {"month_name": "תמוז", "day": 16, "text": ""}, "10-17": {"month_name": "תמוז", "day": 17, "text": ""}, "10-18": {"month_name": "תמוז", "day": 18, "text": ""}, "10-19": {"month_name": "תמוז", "day": 19, "text": ""}, "10-20": {"month_name": "תמוז", "day": 20, "text": ""}, "10-21": {"month_name": "תמוז", "day": 21, "text": ""}, "10-22": {"month_name": "תמוז", "day": 22, "text": ""}, "10-23": {"month_name": "תמוז", "day": 23, "text": ""}, "10-24": {"month_name": "תמוז", "day": 24, "text": ""}, "10-25": {"month_name": "תמוז", "day": 25, "text": ""}, "10-26": {"month_name": "תמוז", "day": 26, "text": ""}, "10-27": {"month_name": "תמוז", "day": 27, "text": ""}, "10-28": {"month_name": "תמוז", "day": 28, "text": ""}, "10-29": {"month_name": "תמוז", "day": 29, "text": ""}, "10-30": {"month_name": "תמוז", "day": 30, "text": ""}, "11-1": {"month_name": "אב", "day": 1, "text": ""}, "11-2": {"month_name": "אב", "day": 2, "text": ""}, "11-3": {"month_name": "אב", "day": 3, "text": ""}, "11-4": {"month_name": "אב", "day": 4, "text": ""}, "11-5": {"month_name": "אב", "day": 5, "text": ""}, "11-6": {"month_name": "אב", "day": 6, "text": ""}, "11-7": {"month_name": "אב", "day": 7, "text": ""}, "11-8": {"month_name": "אב", "day": 8, "text": ""}, "11-9": {"month_name": "אב", "day": 9, "text": ""}, "11-10": {"month_name": "אב", "day": 10, "text": ""}, "11-11": {"month_name": "אב", "day": 11, "text": ""}, "11-12": {"month_name": "אב", "day": 12, "text": ""}, "11-13": {"month_name": "אב", "day": 13, "text": ""}, "11-14": {"month_name": "אב", "day": 14, "text": ""}, "11-15": {"month_name": "אב", "day": 15, "text": ""}, "11-16": {"month_name": "אב", "day": 16, "text": ""}, "11-17": {"month_name": "אב", "day": 17, "text": ""}, "11-18": {"month_name": "אב", "day": 18, "text": ""}, "11-19": {"month_name": "אב", "day": 19, "text": ""}, "11-20": {"month_name": "אב", "day": 20, "text": ""}, "11-21": {"month_name": "אב", "day": 21, "text": ""}, "11-22": {"month_name": "אב", "day": 22, "text": ""}, "11-23": {"month_name": "אב", "day": 23, "text": ""}, "11-24": {"month_name": "אב", "day": 24, "text": ""}, "11-25": {"month_name": "אב", "day": 25, "text": ""}, "11-26": {"month_name": "אב", "day": 26, "text": ""}, "11-27": {"month_name": "אב", "day": 27, "text": ""}, "11-28": {"month_name": "אב", "day": 28, "text": ""}, "11-29": {"month_name": "אב", "day": 29, "text": ""}, "12-1": {"month_name": "אלול", "day": 1, "text": ""}, "12-2": {"month_name": "אלול", "day": 2, "text": ""}, "12-3": {"month_name": "אלול", "day": 3, "text": ""}, "12-4": {"month_name": "אלול", "day": 4, "text": ""}, "12-5": {"month_name": "אלול", "day": 5, "text": ""}, "12-6": {"month_name": "אלול", "day": 6, "text": ""}, "12-7": {"month_name": "אלול", "day": 7, "text": ""}, "12-8": {"month_name": "אלול", "day": 8, "text": ""}, "12-9": {"month_name": "אלול", "day": 9, "text": ""}, "12-10": {"month_name": "אלול", "day": 10, "text": ""}, "12-11": {"month_name": "אלול", "day": 11, "text": ""}, "12-12": {"month_name": "אלול", "day": 12, "text": ""}, "12-13": {"month_name": "אלול", "day": 13, "text": ""}, "12-14": {"month_name": "אלול", "day": 14, "text": ""}, "12-15": {"month_name": "אלול", "day": 15, "text": ""}, "12-16": {"month_name": "אלול", "day": 16, "text": ""}, "12-17": {"month_name": "אלול", "day": 17, "text": ""}, "12-18": {"month_name": "אלול", "day": 18, "text": ""}, "12-19": {"month_name": "אלול", "day": 19, "text": ""}, "12-20": {"month_name": "אלול", "day": 20, "text": ""}, "12-21": {"month_name": "אלול", "day": 21, "text": ""}, "12-22": {"month_name": "אלול", "day": 22, "text": ""}, "12-23": {"month_name": "אלול", "day": 23, "text": ""}, "12-24": {"month_name": "אלול", "day": 24, "text": ""}, "12-25": {"month_name": "אלול", "day": 25, "text": ""}, "12-26": {"month_name": "אלול", "day": 26, "text": ""}, "12-27": {"month_name": "אלול", "day": 27, "text": ""}, "12-28": {"month_name": "אלול", "day": 28, "text": ""}, "12-29": {"month_name": "אלול", "day": 29, "text": ""}, "12-30": {"month_name": "אלול", "day": 30, "text": ""}};
+
+        buildCalendar();
+        }
+
+        function goToday() {
+            currentViewDate = new Date(today);
+            buildCalendar();
+            selectDate(new Date(today));
+        }
+
+        function selectDate(date) {
+            selectedDate = date;
+            buildCalendar();
+            showEntry(date);
+        }
+
+        function showEntry(date) {
+            const loader = document.getElementById('loader');
+            const emptyState = document.getElementById('emptyState');
+            const entryContent = document.getElementById('entryContent');
+            loader.style.display = 'block';
+            emptyState.style.display = 'none';
+            entryContent.style.display = 'none';
+            setTimeout(() => {
+                const hDate = getHebrewDate(date);
+                const monthName = hebrewMonthName(hDate.year, hDate.month);
+                const hebStr = `${toGematria(hDate.day)} ב${monthName}`;
+                const gregStr = `${DAY_NAMES_HE[date.getDay()]} · ${date.getDate()} ${GREGORIAN_MONTHS_HE[date.getMonth()]} ${date.getFullYear()}`;
+                document.getElementById('entryDateHeb').textContent = hebStr;
+                document.getElementById('entryDateGreg').textContent = gregStr;
+                const entryData = HAYOM_YOM_DATA[hDate.month + '-' + hDate.day];
+                const entryText = entryData && entryData.text ? entryData.text : '';
+                if (entryText) {
+                    document.getElementById('entryBody').innerHTML = `<p>${entryText}</p>`;
+                } else {
+                    document.getElementById('entryBody').innerHTML = `<p style="color:var(--text-dim);text-align:center;font-size:1rem;line-height:2;opacity:0.6;">המלל ליום זה טרם הוזן<br><span style="font-size:0.8rem;">${hebStr}</span></p>`;
+                }
+                document.getElementById('entrySource').textContent = `— היום יום · ${hebStr} —`;
+                document.getElementById('dayCounter').textContent = `${date.getDate()} / ${new Date(date.getFullYear(), date.getMonth()+1, 0).getDate()}`;
+                document.getElementById('btnPrev').disabled = date.getDate() <= 1 && date.getMonth() === 0;
+                document.getElementById('btnNext').disabled = false;
+                updateMarkReadBtn(date);
+                loader.style.display = 'none';
+                entryContent.style.display = 'block';
+                entryContent.classList.remove('animate-in');
+                void entryContent.offsetWidth;
+                entryContent.classList.add('animate-in');
+                document.getElementById('contentCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        }
+
+        function updateMarkReadBtn(date) {
+            const btn = document.getElementById('btnMarkRead');
+            const icon = document.getElementById('markReadIcon');
+            const text = document.getElementById('markReadText');
+            const read = isRead(date);
+            btn.className = 'btn-mark-read' + (read ? ' done' : '');
+            icon.textContent = read ? '✓' : '☐';
+            text.textContent = read ? 'קראתי! (לחץ לביטול)' : 'קראתי';
+        }
+
+        function toggleRead() {
+            if(!selectedDate) return;
+            toggleReadDate(selectedDate);
+            updateMarkReadBtn(selectedDate);
+            buildCalendar();
+        }
+
+        function navigateEntry(dir) {
+            if(!selectedDate) return;
+            const d = new Date(selectedDate);
+            d.setDate(d.getDate() + dir);
+            selectedDate = d;
+            currentViewDate = new Date(d);
+            buildCalendar();
+            showEntry(d);
+        }
+
+        function shareToWhatsapp() {
+            const dateStr = selectedDate ? `יום ${selectedDate.getDate()} ${GREGORIAN_MONTHS_HE[selectedDate.getMonth()]}` : 'היום יום';
+            const text = `מזמין אותך לקרוא היום יום: ${dateStr}\n${window.location.href}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        buildCalendar();
+        selectDate(new Date(today));
+    </script>
+</body>
+</html>
