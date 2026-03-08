@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>היום יום</title>
-    <meta property="og:description" content="הצטרפו לקריאת היום יום של הרבי "ל.">
+    <meta property="og:description" content="קריאת היום יום של הרבי מלובביץ׳. לכבוד נשמתו הקדושה של כ״ק אדמו״ר זצוקל.">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c9a84c'/%3E%3Cstop offset='100%25' stop-color='%23e8c97a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x='50' y='72' text-anchor='middle' font-family='serif' font-size='56' font-weight='900' fill='%2305101f'%3E%D7%99%3C/text%3E%3C/svg%3E">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -335,16 +335,6 @@
             line-height: 1.8;
         }
 
-        .book-year {
-            position: relative;
-            z-index: 1;
-            font-size: 0.75rem;
-            color: rgba(201,168,76,0.55);
-            margin-top: 0.6rem;
-            font-family: 'Heebo', sans-serif;
-            letter-spacing: 0.1em;
-        }
-
         /* === DATE SELECTOR === */
         .ornament-divider {
             text-align: center;
@@ -398,8 +388,18 @@
             font-size: 1.15rem;
             font-weight: 700;
             color: var(--gold-light);
-            min-width: 180px;
+            min-width: 200px;
             text-align: center;
+            line-height: 1.3;
+        }
+
+        .month-label-sub {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            font-family: 'Heebo', sans-serif;
+            font-weight: 400;
+            display: block;
+            margin-top: 2px;
         }
 
         .calendar-label {
@@ -412,6 +412,23 @@
             font-weight: 500;
         }
 
+        /* Day-of-week headers */
+        .days-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 7px;
+            margin-bottom: 6px;
+        }
+        .day-header-cell {
+            text-align: center;
+            font-size: 0.62rem;
+            color: var(--gold);
+            font-family: 'Noto Serif Hebrew', serif;
+            font-weight: 700;
+            padding: 4px 2px;
+            letter-spacing: 0.05em;
+        }
+
         .days-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -419,20 +436,31 @@
             margin-bottom: 2rem;
         }
 
-        @media (max-width: 600px) {
-            .days-grid { grid-template-columns: repeat(5, 1fr); gap: 5px; }
+        @media (max-width: 500px) {
+            .days-grid, .days-header { grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        }
+
+        /* Empty cells for offset */
+        .day-empty {
+            background: transparent;
+            border: none;
         }
 
         .day-card {
             background: var(--navy-mid);
             border: 1px solid rgba(201,168,76,0.12);
             border-radius: 13px;
-            padding: 10px 6px;
+            padding: 8px 4px;
             text-align: center;
             cursor: pointer;
             transition: all 0.22s;
             position: relative;
             overflow: hidden;
+            min-height: 52px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .day-card::before {
@@ -462,14 +490,14 @@
 
         .today-badge {
             position: absolute;
-            top: 4px;
+            top: 3px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--gold);
             color: var(--deep);
-            font-size: 0.42rem;
+            font-size: 0.38rem;
             font-weight: 700;
-            padding: 2px 5px;
+            padding: 1px 4px;
             border-radius: 20px;
             white-space: nowrap;
             letter-spacing: 0.05em;
@@ -477,7 +505,7 @@
 
         .day-num {
             font-family: 'Noto Serif Hebrew', serif;
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--text);
             position: relative;
@@ -486,13 +514,14 @@
 
         .day-card.today .day-num, .day-card.selected .day-num { color: var(--gold-light); }
 
-        .day-heb {
-            font-family: 'Noto Serif Hebrew', serif;
-            font-size: 0.6rem;
+        .day-greg {
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.55rem;
             color: var(--text-dim);
             position: relative;
             z-index: 1;
             margin-top: 2px;
+            opacity: 0.7;
         }
 
         .day-card.read-mark::after {
@@ -683,6 +712,9 @@
             .entry-body { font-size: 1.2rem; line-height: 2.2; }
             .entry-date-heb { font-size: 1.3rem; }
             .ornament-divider { margin: 1.5rem 0; }
+            .day-num { font-size: 0.85rem; }
+            .day-greg { font-size: 0.48rem; }
+            .day-header-cell { font-size: 0.55rem; }
         }
     </style>
 </head>
@@ -728,20 +760,25 @@
             <div class="book-banner-shimmer"></div>
             <div class="book-title-he">היום יום</div>
             <div class="book-subtitle-he">
-                ממאמרי כ״ק אדמו״ר הרבי מלובביץ׳<br>
-                לכל יום ויום בשנה
+                מלוקט משיחות ומכתבי כ״ק אדמו״ר יוסף יצחק זצוק״ל<br>
+                לוקט וסודר ע״י כ״ק אדמו״ר מנחם מענדל זצוק״ל
             </div>
         </div>
 
         <div class="ornament-divider animate-in"><span>✦ ✦ ✦</span></div>
 
         <div class="animate-in">
-            <p class="calendar-label">✦ בחר יום בלוח השנה ✦</p>
+            <p class="calendar-label">✦ בחר יום בלוח השנה העברי ✦</p>
             <div class="month-nav">
-                <button class="month-nav-btn" onclick="changeMonth(-1)">◀</button>
-                <div class="month-label" id="monthLabel"></div>
-                <button class="month-nav-btn" onclick="changeMonth(1)">▶</button>
+                <button class="month-nav-btn" onclick="changeHebrewMonth(-1)">◀</button>
+                <div class="month-label" id="monthLabel">
+                    <span id="monthLabelMain"></span>
+                    <span class="month-label-sub" id="monthLabelSub"></span>
+                </div>
+                <button class="month-nav-btn" onclick="changeHebrewMonth(1)">▶</button>
             </div>
+            <!-- Day-of-week headers (ראשון to שבת) -->
+            <div class="days-header" id="daysHeader"></div>
             <div class="days-grid" id="calendarGrid"></div>
         </div>
 
@@ -789,9 +826,9 @@
     </footer>
 
     <script>
-        const HEBREW_MONTHS = ['תשרי','חשון','כסלו','טבת','שבט','אדר','אדר א׳','אדר ב׳','ניסן','אייר','סיון','תמוז','אב','אלול'];
+        // ===== HEBREW CALENDAR ENGINE =====
         const GREGORIAN_MONTHS_HE = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
-        const DAY_NAMES_HE = ['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','שבת'];
+        const DOW_HE = ['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
 
         function toGematria(num) {
             const letters = {1:'א',2:'ב',3:'ג',4:'ד',5:'ה',6:'ו',7:'ז',8:'ח',9:'ט',10:'י',20:'כ',30:'ל',40:'מ',50:'נ',60:'ס',70:'ע',80:'פ',90:'צ',100:'ק',200:'ר',300:'ש',400:'ת'};
@@ -850,6 +887,27 @@
             const jdn = dateToJDN(date.getFullYear(), date.getMonth()+1, date.getDate());
             return jdnToHebrew(jdn);
         }
+
+        // Convert Hebrew date back to Gregorian JDN
+        function hebrewToJDN(hYear, hMonth, hDay) {
+            let jdn = hebrewYearStart(hYear);
+            for(let m=1; m<hMonth; m++) jdn += hebrewMonthDays(hYear, m);
+            jdn += hDay - 1;
+            return jdn;
+        }
+        function jdnToGregorian(jdn) {
+            let a = jdn + 32044;
+            let b = Math.floor((4*a+3)/146097);
+            let c = a - Math.floor(146097*b/4);
+            let d = Math.floor((4*c+3)/1461);
+            let e = c - Math.floor(1461*d/4);
+            let m = Math.floor((5*e+2)/153);
+            let day = e - Math.floor((153*m+2)/5) + 1;
+            let month = m + 3 - 12*Math.floor(m/10);
+            let year = 100*b + d - 4800 + Math.floor(m/10);
+            return new Date(year, month-1, day);
+        }
+
         function hebrewMonthName(hYear, hMonth) {
             if(!hebrewIsLeap(hYear)) {
                 const names=['תשרי','חשון','כסלו','טבת','שבט','אדר','ניסן','אייר','סיון','תמוז','אב','אלול'];
@@ -860,91 +918,192 @@
             }
         }
 
+        // ===== STATE =====
         const today = new Date();
-        let currentViewDate = new Date(today);
-        let selectedDate = null;
-        const readKey = 'hayomyom_read';
+        const todayHeb = getHebrewDate(today);
 
+        // Current Hebrew month being viewed
+        let viewHYear = todayHeb.year;
+        let viewHMonth = todayHeb.month;
+
+        // Selected Hebrew date
+        let selectedHYear = null;
+        let selectedHMonth = null;
+        let selectedHDay = null;
+
+        const readKey = 'hayomyom_read';
         function getReadSet() {
             try { return new Set(JSON.parse(localStorage.getItem(readKey)||'[]')); }
             catch { return new Set(); }
         }
-        function dateKey(date) { return date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate(); }
-        function isRead(date) { return getReadSet().has(dateKey(date)); }
-        function toggleReadDate(date) {
+        function hebDateKey(hy, hm, hd) { return `${hy}-${hm}-${hd}`; }
+        function isReadHeb(hy, hm, hd) { return getReadSet().has(hebDateKey(hy, hm, hd)); }
+        function toggleReadHeb(hy, hm, hd) {
             const s = getReadSet();
-            const k = dateKey(date);
+            const k = hebDateKey(hy, hm, hd);
             if(s.has(k)) s.delete(k); else s.add(k);
             localStorage.setItem(readKey, JSON.stringify([...s]));
         }
 
+        // ===== BUILD CALENDAR =====
         function buildCalendar() {
-            const year = currentViewDate.getFullYear();
-            const month = currentViewDate.getMonth();
-            const daysInMonth = new Date(year, month+1, 0).getDate();
-            const label = `${GREGORIAN_MONTHS_HE[month]} ${year}`;
-            document.getElementById('monthLabel').textContent = label;
+            const hYear = viewHYear;
+            const hMonth = viewHMonth;
+            const monthName = hebrewMonthName(hYear, hMonth);
+            const daysInMonth = hebrewMonthDays(hYear, hMonth);
+
+            // Hebrew year in gematria
+            const yearGem = toYearGematria(hYear);
+            document.getElementById('monthLabelMain').textContent = `${monthName} ${yearGem}`;
+
+            // Show Gregorian range for this Hebrew month
+            const startGreg = jdnToGregorian(hebrewToJDN(hYear, hMonth, 1));
+            const endGreg = jdnToGregorian(hebrewToJDN(hYear, hMonth, daysInMonth));
+            const gregRange = formatGregRange(startGreg, endGreg);
+            document.getElementById('monthLabelSub').textContent = gregRange;
+
+            // Day of week headers
+            const header = document.getElementById('daysHeader');
+            header.innerHTML = '';
+            const dowNames = ['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
+            dowNames.forEach(d => {
+                const cell = document.createElement('div');
+                cell.className = 'day-header-cell';
+                cell.textContent = d;
+                header.appendChild(cell);
+            });
+
+            // First day of month DOW (Sunday=0)
+            const firstDOW = startGreg.getDay(); // 0=Sun
+
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
+
+            // Empty cells for offset
+            for(let i=0; i<firstDOW; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'day-empty';
+                grid.appendChild(empty);
+            }
+
+            // Day cells
             for(let d=1; d<=daysInMonth; d++) {
-                const date = new Date(year, month, d);
-                const hDate = getHebrewDate(date);
-                const isToday = date.toDateString() === today.toDateString();
-                const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
-                const read = isRead(date);
+                const gregDate = jdnToGregorian(hebrewToJDN(hYear, hMonth, d));
+                const isToday = hYear===todayHeb.year && hMonth===todayHeb.month && d===todayHeb.day;
+                const isSelected = hYear===selectedHYear && hMonth===selectedHMonth && d===selectedHDay;
+                const read = isReadHeb(hYear, hMonth, d);
+
                 const card = document.createElement('div');
-                card.className = 'day-card' + (isToday ? ' today' : '') + (isSelected ? ' selected' : '') + (read ? ' read-mark' : '');
-                card.innerHTML = `${isToday ? '<div class="today-badge">היום</div>' : ''}<div class="day-num" style="${isToday ? 'margin-top:14px':''}">${d}</div><div class="day-heb">${toGematria(hDate.day)} ${hebrewMonthName(hDate.year, hDate.month)}</div>`;
-                card.onclick = () => selectDate(new Date(year, month, d));
+                card.className = 'day-card' +
+                    (isToday ? ' today' : '') +
+                    (isSelected ? ' selected' : '') +
+                    (read ? ' read-mark' : '');
+
+                const gregLabel = `${gregDate.getDate()}/${gregDate.getMonth()+1}`;
+
+                card.innerHTML =
+                    (isToday ? '<div class="today-badge">היום</div>' : '') +
+                    `<div class="day-num" ${isToday ? 'style="margin-top:12px"' : ''}>${toGematria(d)}</div>` +
+                    `<div class="day-greg">${gregLabel}</div>`;
+
+                card.onclick = () => selectHebDate(hYear, hMonth, d);
                 grid.appendChild(card);
             }
         }
 
-        function changeMonth(dir) {
-            currentViewDate.setMonth(currentViewDate.getMonth() + dir);
-            const HAYOM_YOM_DATA = {"1-1": {"month_name": "תשרי", "day": 1, "text": "ראש השנה. תפלת מוסף. בשעת תקיעת שופר יכוון לקבל עליו עול מלכות שמים מחדש."}, "1-2": {"month_name": "תשרי", "day": 2, "text": "יום שני של ראש השנה. ביום זה נברא האדם הראשון. כל הבריאה כולה מצפה לתשובת האדם."}, "1-3": {"month_name": "תשרי", "day": 3, "text": ""}, "1-4": {"month_name": "תשרי", "day": 4, "text": ""}, "1-5": {"month_name": "תשרי", "day": 5, "text": ""}, "1-6": {"month_name": "תשרי", "day": 6, "text": ""}, "1-7": {"month_name": "תשרי", "day": 7, "text": ""}, "1-8": {"month_name": "תשרי", "day": 8, "text": ""}, "1-9": {"month_name": "תשרי", "day": 9, "text": ""}, "1-10": {"month_name": "תשרי", "day": 10, "text": "יום הכיפורים. יום זה הוא קודש קדשים. כל עצמותינו תאמרנה ה' מי כמוך."}, "1-11": {"month_name": "תשרי", "day": 11, "text": ""}, "1-12": {"month_name": "תשרי", "day": 12, "text": ""}, "1-13": {"month_name": "תשרי", "day": 13, "text": ""}, "1-14": {"month_name": "תשרי", "day": 14, "text": ""}, "1-15": {"month_name": "תשרי", "day": 15, "text": "סוכות. שמחת בית השואבה. ומי שלא ראה שמחת בית השואבה לא ראה שמחה מימיו."}, "1-16": {"month_name": "תשרי", "day": 16, "text": ""}, "1-17": {"month_name": "תשרי", "day": 17, "text": ""}, "1-18": {"month_name": "תשרי", "day": 18, "text": ""}, "1-19": {"month_name": "תשרי", "day": 19, "text": ""}, "1-20": {"month_name": "תשרי", "day": 20, "text": ""}, "1-21": {"month_name": "תשרי", "day": 21, "text": ""}, "1-22": {"month_name": "תשרי", "day": 22, "text": ""}, "1-23": {"month_name": "תשרי", "day": 23, "text": ""}, "1-24": {"month_name": "תשרי", "day": 24, "text": ""}, "1-25": {"month_name": "תשרי", "day": 25, "text": ""}, "1-26": {"month_name": "תשרי", "day": 26, "text": ""}, "1-27": {"month_name": "תשרי", "day": 27, "text": ""}, "1-28": {"month_name": "תשרי", "day": 28, "text": ""}, "1-29": {"month_name": "תשרי", "day": 29, "text": ""}, "1-30": {"month_name": "תשרי", "day": 30, "text": ""}, "2-1": {"month_name": "חשון", "day": 1, "text": "ראש חודש חשון. חדש מרחשון נקרא כך על שם המרירות שיש בו, שאין בו שום מועד."}, "2-2": {"month_name": "חשון", "day": 2, "text": ""}, "2-3": {"month_name": "חשון", "day": 3, "text": ""}, "2-4": {"month_name": "חשון", "day": 4, "text": ""}, "2-5": {"month_name": "חשון", "day": 5, "text": ""}, "2-6": {"month_name": "חשון", "day": 6, "text": ""}, "2-7": {"month_name": "חשון", "day": 7, "text": ""}, "2-8": {"month_name": "חשון", "day": 8, "text": ""}, "2-9": {"month_name": "חשון", "day": 9, "text": ""}, "2-10": {"month_name": "חשון", "day": 10, "text": ""}, "2-11": {"month_name": "חשון", "day": 11, "text": ""}, "2-12": {"month_name": "חשון", "day": 12, "text": ""}, "2-13": {"month_name": "חשון", "day": 13, "text": ""}, "2-14": {"month_name": "חשון", "day": 14, "text": ""}, "2-15": {"month_name": "חשון", "day": 15, "text": ""}, "2-16": {"month_name": "חשון", "day": 16, "text": ""}, "2-17": {"month_name": "חשון", "day": 17, "text": ""}, "2-18": {"month_name": "חשון", "day": 18, "text": ""}, "2-19": {"month_name": "חשון", "day": 19, "text": ""}, "2-20": {"month_name": "חשון", "day": 20, "text": ""}, "2-21": {"month_name": "חשון", "day": 21, "text": ""}, "2-22": {"month_name": "חשון", "day": 22, "text": ""}, "2-23": {"month_name": "חשון", "day": 23, "text": ""}, "2-24": {"month_name": "חשון", "day": 24, "text": ""}, "2-25": {"month_name": "חשון", "day": 25, "text": ""}, "2-26": {"month_name": "חשון", "day": 26, "text": ""}, "2-27": {"month_name": "חשון", "day": 27, "text": ""}, "2-28": {"month_name": "חשון", "day": 28, "text": ""}, "2-29": {"month_name": "חשון", "day": 29, "text": ""}, "3-1": {"month_name": "כסלו", "day": 1, "text": ""}, "3-2": {"month_name": "כסלו", "day": 2, "text": ""}, "3-3": {"month_name": "כסלו", "day": 3, "text": ""}, "3-4": {"month_name": "כסלו", "day": 4, "text": ""}, "3-5": {"month_name": "כסלו", "day": 5, "text": ""}, "3-6": {"month_name": "כסלו", "day": 6, "text": ""}, "3-7": {"month_name": "כסלו", "day": 7, "text": ""}, "3-8": {"month_name": "כסלו", "day": 8, "text": ""}, "3-9": {"month_name": "כסלו", "day": 9, "text": ""}, "3-10": {"month_name": "כסלו", "day": 10, "text": ""}, "3-11": {"month_name": "כסלו", "day": 11, "text": ""}, "3-12": {"month_name": "כסלו", "day": 12, "text": ""}, "3-13": {"month_name": "כסלו", "day": 13, "text": ""}, "3-14": {"month_name": "כסלו", "day": 14, "text": ""}, "3-15": {"month_name": "כסלו", "day": 15, "text": ""}, "3-16": {"month_name": "כסלו", "day": 16, "text": ""}, "3-17": {"month_name": "כסלו", "day": 17, "text": ""}, "3-18": {"month_name": "כסלו", "day": 18, "text": ""}, "3-19": {"month_name": "כסלו", "day": 19, "text": ""}, "3-20": {"month_name": "כסלו", "day": 20, "text": ""}, "3-21": {"month_name": "כסלו", "day": 21, "text": ""}, "3-22": {"month_name": "כסלו", "day": 22, "text": ""}, "3-23": {"month_name": "כסלו", "day": 23, "text": ""}, "3-24": {"month_name": "כסלו", "day": 24, "text": ""}, "3-25": {"month_name": "כסלו", "day": 25, "text": "כה כסלו, יום חמישי של חנוכה. אור חנוכה מאיר את חושך הגלות."}, "3-26": {"month_name": "כסלו", "day": 26, "text": ""}, "3-27": {"month_name": "כסלו", "day": 27, "text": ""}, "3-28": {"month_name": "כסלו", "day": 28, "text": ""}, "3-29": {"month_name": "כסלו", "day": 29, "text": ""}, "3-30": {"month_name": "כסלו", "day": 30, "text": ""}, "4-1": {"month_name": "טבת", "day": 1, "text": ""}, "4-2": {"month_name": "טבת", "day": 2, "text": ""}, "4-3": {"month_name": "טבת", "day": 3, "text": ""}, "4-4": {"month_name": "טבת", "day": 4, "text": ""}, "4-5": {"month_name": "טבת", "day": 5, "text": ""}, "4-6": {"month_name": "טבת", "day": 6, "text": ""}, "4-7": {"month_name": "טבת", "day": 7, "text": ""}, "4-8": {"month_name": "טבת", "day": 8, "text": ""}, "4-9": {"month_name": "טבת", "day": 9, "text": ""}, "4-10": {"month_name": "טבת", "day": 10, "text": ""}, "4-11": {"month_name": "טבת", "day": 11, "text": ""}, "4-12": {"month_name": "טבת", "day": 12, "text": ""}, "4-13": {"month_name": "טבת", "day": 13, "text": ""}, "4-14": {"month_name": "טבת", "day": 14, "text": ""}, "4-15": {"month_name": "טבת", "day": 15, "text": ""}, "4-16": {"month_name": "טבת", "day": 16, "text": ""}, "4-17": {"month_name": "טבת", "day": 17, "text": ""}, "4-18": {"month_name": "טבת", "day": 18, "text": ""}, "4-19": {"month_name": "טבת", "day": 19, "text": ""}, "4-20": {"month_name": "טבת", "day": 20, "text": ""}, "4-21": {"month_name": "טבת", "day": 21, "text": ""}, "4-22": {"month_name": "טבת", "day": 22, "text": ""}, "4-23": {"month_name": "טבת", "day": 23, "text": ""}, "4-24": {"month_name": "טבת", "day": 24, "text": ""}, "4-25": {"month_name": "טבת", "day": 25, "text": ""}, "4-26": {"month_name": "טבת", "day": 26, "text": ""}, "4-27": {"month_name": "טבת", "day": 27, "text": ""}, "4-28": {"month_name": "טבת", "day": 28, "text": ""}, "4-29": {"month_name": "טבת", "day": 29, "text": ""}, "5-1": {"month_name": "שבט", "day": 1, "text": ""}, "5-2": {"month_name": "שבט", "day": 2, "text": ""}, "5-3": {"month_name": "שבט", "day": 3, "text": ""}, "5-4": {"month_name": "שבט", "day": 4, "text": ""}, "5-5": {"month_name": "שבט", "day": 5, "text": ""}, "5-6": {"month_name": "שבט", "day": 6, "text": ""}, "5-7": {"month_name": "שבט", "day": 7, "text": ""}, "5-8": {"month_name": "שבט", "day": 8, "text": ""}, "5-9": {"month_name": "שבט", "day": 9, "text": ""}, "5-10": {"month_name": "שבט", "day": 10, "text": ""}, "5-11": {"month_name": "שבט", "day": 11, "text": ""}, "5-12": {"month_name": "שבט", "day": 12, "text": ""}, "5-13": {"month_name": "שבט", "day": 13, "text": ""}, "5-14": {"month_name": "שבט", "day": 14, "text": ""}, "5-15": {"month_name": "שבט", "day": 15, "text": "ט״ו בשבט, ראש השנה לאילנות. ביום זה יוצאים המים החדשים להחיות את האדמה."}, "5-16": {"month_name": "שבט", "day": 16, "text": ""}, "5-17": {"month_name": "שבט", "day": 17, "text": ""}, "5-18": {"month_name": "שבט", "day": 18, "text": ""}, "5-19": {"month_name": "שבט", "day": 19, "text": ""}, "5-20": {"month_name": "שבט", "day": 20, "text": ""}, "5-21": {"month_name": "שבט", "day": 21, "text": ""}, "5-22": {"month_name": "שבט", "day": 22, "text": ""}, "5-23": {"month_name": "שבט", "day": 23, "text": ""}, "5-24": {"month_name": "שבט", "day": 24, "text": ""}, "5-25": {"month_name": "שבט", "day": 25, "text": ""}, "5-26": {"month_name": "שבט", "day": 26, "text": ""}, "5-27": {"month_name": "שבט", "day": 27, "text": ""}, "5-28": {"month_name": "שבט", "day": 28, "text": ""}, "5-29": {"month_name": "שבט", "day": 29, "text": ""}, "5-30": {"month_name": "שבט", "day": 30, "text": ""}, "6-1": {"month_name": "אדר", "day": 1, "text": ""}, "6-2": {"month_name": "אדר", "day": 2, "text": ""}, "6-3": {"month_name": "אדר", "day": 3, "text": ""}, "6-4": {"month_name": "אדר", "day": 4, "text": ""}, "6-5": {"month_name": "אדר", "day": 5, "text": ""}, "6-6": {"month_name": "אדר", "day": 6, "text": ""}, "6-7": {"month_name": "אדר", "day": 7, "text": ""}, "6-8": {"month_name": "אדר", "day": 8, "text": ""}, "6-9": {"month_name": "אדר", "day": 9, "text": ""}, "6-10": {"month_name": "אדר", "day": 10, "text": ""}, "6-11": {"month_name": "אדר", "day": 11, "text": ""}, "6-12": {"month_name": "אדר", "day": 12, "text": ""}, "6-13": {"month_name": "אדר", "day": 13, "text": ""}, "6-14": {"month_name": "אדר", "day": 14, "text": ""}, "6-15": {"month_name": "אדר", "day": 15, "text": ""}, "6-16": {"month_name": "אדר", "day": 16, "text": ""}, "6-17": {"month_name": "אדר", "day": 17, "text": ""}, "6-18": {"month_name": "אדר", "day": 18, "text": "י״ח אלול, יום הולדת הבעל שם טוב ויום הולדת אדמו״ר הזקן. יום גדול לכל עולם החסידות."}, "6-19": {"month_name": "אדר", "day": 19, "text": ""}, "6-20": {"month_name": "אדר", "day": 20, "text": ""}, "6-21": {"month_name": "אדר", "day": 21, "text": ""}, "6-22": {"month_name": "אדר", "day": 22, "text": ""}, "6-23": {"month_name": "אדר", "day": 23, "text": ""}, "6-24": {"month_name": "אדר", "day": 24, "text": ""}, "6-25": {"month_name": "אדר", "day": 25, "text": ""}, "6-26": {"month_name": "אדר", "day": 26, "text": ""}, "6-27": {"month_name": "אדר", "day": 27, "text": ""}, "6-28": {"month_name": "אדר", "day": 28, "text": ""}, "6-29": {"month_name": "אדר", "day": 29, "text": ""}, "7-1": {"month_name": "ניסן", "day": 1, "text": ""}, "7-2": {"month_name": "ניסן", "day": 2, "text": ""}, "7-3": {"month_name": "ניסן", "day": 3, "text": ""}, "7-4": {"month_name": "ניסן", "day": 4, "text": ""}, "7-5": {"month_name": "ניסן", "day": 5, "text": ""}, "7-6": {"month_name": "ניסן", "day": 6, "text": ""}, "7-7": {"month_name": "ניסן", "day": 7, "text": ""}, "7-8": {"month_name": "ניסן", "day": 8, "text": ""}, "7-9": {"month_name": "ניסן", "day": 9, "text": ""}, "7-10": {"month_name": "ניסן", "day": 10, "text": ""}, "7-11": {"month_name": "ניסן", "day": 11, "text": ""}, "7-12": {"month_name": "ניסן", "day": 12, "text": ""}, "7-13": {"month_name": "ניסן", "day": 13, "text": ""}, "7-14": {"month_name": "ניסן", "day": 14, "text": ""}, "7-15": {"month_name": "ניסן", "day": 15, "text": ""}, "7-16": {"month_name": "ניסן", "day": 16, "text": ""}, "7-17": {"month_name": "ניסן", "day": 17, "text": ""}, "7-18": {"month_name": "ניסן", "day": 18, "text": ""}, "7-19": {"month_name": "ניסן", "day": 19, "text": ""}, "7-20": {"month_name": "ניסן", "day": 20, "text": ""}, "7-21": {"month_name": "ניסן", "day": 21, "text": ""}, "7-22": {"month_name": "ניסן", "day": 22, "text": ""}, "7-23": {"month_name": "ניסן", "day": 23, "text": ""}, "7-24": {"month_name": "ניסן", "day": 24, "text": ""}, "7-25": {"month_name": "ניסן", "day": 25, "text": ""}, "7-26": {"month_name": "ניסן", "day": 26, "text": ""}, "7-27": {"month_name": "ניסן", "day": 27, "text": ""}, "7-28": {"month_name": "ניסן", "day": 28, "text": ""}, "7-29": {"month_name": "ניסן", "day": 29, "text": ""}, "7-30": {"month_name": "ניסן", "day": 30, "text": ""}, "8-1": {"month_name": "אייר", "day": 1, "text": ""}, "8-2": {"month_name": "אייר", "day": 2, "text": ""}, "8-3": {"month_name": "אייר", "day": 3, "text": ""}, "8-4": {"month_name": "אייר", "day": 4, "text": ""}, "8-5": {"month_name": "אייר", "day": 5, "text": ""}, "8-6": {"month_name": "אייר", "day": 6, "text": ""}, "8-7": {"month_name": "אייר", "day": 7, "text": ""}, "8-8": {"month_name": "אייר", "day": 8, "text": ""}, "8-9": {"month_name": "אייר", "day": 9, "text": ""}, "8-10": {"month_name": "אייר", "day": 10, "text": ""}, "8-11": {"month_name": "אייר", "day": 11, "text": ""}, "8-12": {"month_name": "אייר", "day": 12, "text": ""}, "8-13": {"month_name": "אייר", "day": 13, "text": ""}, "8-14": {"month_name": "אייר", "day": 14, "text": ""}, "8-15": {"month_name": "אייר", "day": 15, "text": ""}, "8-16": {"month_name": "אייר", "day": 16, "text": ""}, "8-17": {"month_name": "אייר", "day": 17, "text": ""}, "8-18": {"month_name": "אייר", "day": 18, "text": ""}, "8-19": {"month_name": "אייר", "day": 19, "text": ""}, "8-20": {"month_name": "אייר", "day": 20, "text": ""}, "8-21": {"month_name": "אייר", "day": 21, "text": ""}, "8-22": {"month_name": "אייר", "day": 22, "text": ""}, "8-23": {"month_name": "אייר", "day": 23, "text": ""}, "8-24": {"month_name": "אייר", "day": 24, "text": ""}, "8-25": {"month_name": "אייר", "day": 25, "text": ""}, "8-26": {"month_name": "אייר", "day": 26, "text": ""}, "8-27": {"month_name": "אייר", "day": 27, "text": ""}, "8-28": {"month_name": "אייר", "day": 28, "text": ""}, "8-29": {"month_name": "אייר", "day": 29, "text": ""}, "8-30": {"month_name": "אייר", "day": 30, "text": ""}, "9-1": {"month_name": "סיון", "day": 1, "text": ""}, "9-2": {"month_name": "סיון", "day": 2, "text": ""}, "9-3": {"month_name": "סיון", "day": 3, "text": ""}, "9-4": {"month_name": "סיון", "day": 4, "text": ""}, "9-5": {"month_name": "סיון", "day": 5, "text": ""}, "9-6": {"month_name": "סיון", "day": 6, "text": ""}, "9-7": {"month_name": "סיון", "day": 7, "text": ""}, "9-8": {"month_name": "סיון", "day": 8, "text": ""}, "9-9": {"month_name": "סיון", "day": 9, "text": ""}, "9-10": {"month_name": "סיון", "day": 10, "text": ""}, "9-11": {"month_name": "סיון", "day": 11, "text": ""}, "9-12": {"month_name": "סיון", "day": 12, "text": ""}, "9-13": {"month_name": "סיון", "day": 13, "text": ""}, "9-14": {"month_name": "סיון", "day": 14, "text": "י״ד ניסן, ערב פסח. בדיקת חמץ ובטול חמץ. סיפור יציאת מצרים לבנים."}, "9-15": {"month_name": "סיון", "day": 15, "text": "ליל הסדר. 'בכל דור ודור חייב אדם לראות את עצמו כאילו הוא יצא ממצרים'."}, "9-16": {"month_name": "סיון", "day": 16, "text": ""}, "9-17": {"month_name": "סיון", "day": 17, "text": ""}, "9-18": {"month_name": "סיון", "day": 18, "text": ""}, "9-19": {"month_name": "סיון", "day": 19, "text": ""}, "9-20": {"month_name": "סיון", "day": 20, "text": ""}, "9-21": {"month_name": "סיון", "day": 21, "text": ""}, "9-22": {"month_name": "סיון", "day": 22, "text": ""}, "9-23": {"month_name": "סיון", "day": 23, "text": ""}, "9-24": {"month_name": "סיון", "day": 24, "text": ""}, "9-25": {"month_name": "סיון", "day": 25, "text": ""}, "9-26": {"month_name": "סיון", "day": 26, "text": ""}, "9-27": {"month_name": "סיון", "day": 27, "text": ""}, "9-28": {"month_name": "סיון", "day": 28, "text": ""}, "9-29": {"month_name": "סיון", "day": 29, "text": ""}, "10-1": {"month_name": "תמוז", "day": 1, "text": ""}, "10-2": {"month_name": "תמוז", "day": 2, "text": ""}, "10-3": {"month_name": "תמוז", "day": 3, "text": ""}, "10-4": {"month_name": "תמוז", "day": 4, "text": ""}, "10-5": {"month_name": "תמוז", "day": 5, "text": ""}, "10-6": {"month_name": "תמוז", "day": 6, "text": ""}, "10-7": {"month_name": "תמוז", "day": 7, "text": ""}, "10-8": {"month_name": "תמוז", "day": 8, "text": ""}, "10-9": {"month_name": "תמוז", "day": 9, "text": ""}, "10-10": {"month_name": "תמוז", "day": 10, "text": ""}, "10-11": {"month_name": "תמוז", "day": 11, "text": ""}, "10-12": {"month_name": "תמוז", "day": 12, "text": ""}, "10-13": {"month_name": "תמוז", "day": 13, "text": ""}, "10-14": {"month_name": "תמוז", "day": 14, "text": ""}, "10-15": {"month_name": "תמוז", "day": 15, "text": ""}, "10-16": {"month_name": "תמוז", "day": 16, "text": ""}, "10-17": {"month_name": "תמוז", "day": 17, "text": ""}, "10-18": {"month_name": "תמוז", "day": 18, "text": ""}, "10-19": {"month_name": "תמוז", "day": 19, "text": ""}, "10-20": {"month_name": "תמוז", "day": 20, "text": ""}, "10-21": {"month_name": "תמוז", "day": 21, "text": ""}, "10-22": {"month_name": "תמוז", "day": 22, "text": ""}, "10-23": {"month_name": "תמוז", "day": 23, "text": ""}, "10-24": {"month_name": "תמוז", "day": 24, "text": ""}, "10-25": {"month_name": "תמוז", "day": 25, "text": ""}, "10-26": {"month_name": "תמוז", "day": 26, "text": ""}, "10-27": {"month_name": "תמוז", "day": 27, "text": ""}, "10-28": {"month_name": "תמוז", "day": 28, "text": ""}, "10-29": {"month_name": "תמוז", "day": 29, "text": ""}, "10-30": {"month_name": "תמוז", "day": 30, "text": ""}, "11-1": {"month_name": "אב", "day": 1, "text": ""}, "11-2": {"month_name": "אב", "day": 2, "text": ""}, "11-3": {"month_name": "אב", "day": 3, "text": ""}, "11-4": {"month_name": "אב", "day": 4, "text": ""}, "11-5": {"month_name": "אב", "day": 5, "text": ""}, "11-6": {"month_name": "אב", "day": 6, "text": ""}, "11-7": {"month_name": "אב", "day": 7, "text": ""}, "11-8": {"month_name": "אב", "day": 8, "text": ""}, "11-9": {"month_name": "אב", "day": 9, "text": ""}, "11-10": {"month_name": "אב", "day": 10, "text": ""}, "11-11": {"month_name": "אב", "day": 11, "text": ""}, "11-12": {"month_name": "אב", "day": 12, "text": ""}, "11-13": {"month_name": "אב", "day": 13, "text": ""}, "11-14": {"month_name": "אב", "day": 14, "text": ""}, "11-15": {"month_name": "אב", "day": 15, "text": ""}, "11-16": {"month_name": "אב", "day": 16, "text": ""}, "11-17": {"month_name": "אב", "day": 17, "text": ""}, "11-18": {"month_name": "אב", "day": 18, "text": ""}, "11-19": {"month_name": "אב", "day": 19, "text": ""}, "11-20": {"month_name": "אב", "day": 20, "text": ""}, "11-21": {"month_name": "אב", "day": 21, "text": ""}, "11-22": {"month_name": "אב", "day": 22, "text": ""}, "11-23": {"month_name": "אב", "day": 23, "text": ""}, "11-24": {"month_name": "אב", "day": 24, "text": ""}, "11-25": {"month_name": "אב", "day": 25, "text": ""}, "11-26": {"month_name": "אב", "day": 26, "text": ""}, "11-27": {"month_name": "אב", "day": 27, "text": ""}, "11-28": {"month_name": "אב", "day": 28, "text": ""}, "11-29": {"month_name": "אב", "day": 29, "text": ""}, "12-1": {"month_name": "אלול", "day": 1, "text": ""}, "12-2": {"month_name": "אלול", "day": 2, "text": ""}, "12-3": {"month_name": "אלול", "day": 3, "text": ""}, "12-4": {"month_name": "אלול", "day": 4, "text": ""}, "12-5": {"month_name": "אלול", "day": 5, "text": ""}, "12-6": {"month_name": "אלול", "day": 6, "text": ""}, "12-7": {"month_name": "אלול", "day": 7, "text": ""}, "12-8": {"month_name": "אלול", "day": 8, "text": ""}, "12-9": {"month_name": "אלול", "day": 9, "text": ""}, "12-10": {"month_name": "אלול", "day": 10, "text": ""}, "12-11": {"month_name": "אלול", "day": 11, "text": ""}, "12-12": {"month_name": "אלול", "day": 12, "text": ""}, "12-13": {"month_name": "אלול", "day": 13, "text": ""}, "12-14": {"month_name": "אלול", "day": 14, "text": ""}, "12-15": {"month_name": "אלול", "day": 15, "text": ""}, "12-16": {"month_name": "אלול", "day": 16, "text": ""}, "12-17": {"month_name": "אלול", "day": 17, "text": ""}, "12-18": {"month_name": "אלול", "day": 18, "text": ""}, "12-19": {"month_name": "אלול", "day": 19, "text": ""}, "12-20": {"month_name": "אלול", "day": 20, "text": ""}, "12-21": {"month_name": "אלול", "day": 21, "text": ""}, "12-22": {"month_name": "אלול", "day": 22, "text": ""}, "12-23": {"month_name": "אלול", "day": 23, "text": ""}, "12-24": {"month_name": "אלול", "day": 24, "text": ""}, "12-25": {"month_name": "אלול", "day": 25, "text": ""}, "12-26": {"month_name": "אלול", "day": 26, "text": ""}, "12-27": {"month_name": "אלול", "day": 27, "text": ""}, "12-28": {"month_name": "אלול", "day": 28, "text": ""}, "12-29": {"month_name": "אלול", "day": 29, "text": ""}, "12-30": {"month_name": "אלול", "day": 30, "text": ""}};
+        function toYearGematria(y) {
+            // Show last 3 digits in gematria with ה׳ prefix for thousands
+            const mod = y % 1000;
+            const hundreds = Math.floor(mod / 100);
+            const rest = mod % 100;
+            let result = '';
+            if(hundreds > 0) {
+                const h = {1:'ק',2:'ר',3:'ש',4:'ת',5:'ת׳ק',6:'ת׳ר',7:'ת׳ש',8:'ת׳ת'}[hundreds] || '';
+                result += h;
+            }
+            if(rest > 0) result += toGematria(rest);
+            // Add geresh/gershayim
+            if(result.length === 1) result += '׳';
+            else result = result.slice(0,-1) + '״' + result.slice(-1);
+            return 'ה׳' + result;
+        }
 
-        buildCalendar();
+        function formatGregRange(start, end) {
+            const sm = GREGORIAN_MONTHS_HE[start.getMonth()];
+            const em = GREGORIAN_MONTHS_HE[end.getMonth()];
+            if(start.getMonth() === end.getMonth()) {
+                return `${start.getDate()}–${end.getDate()} ${sm} ${start.getFullYear()}`;
+            }
+            return `${start.getDate()} ${sm} – ${end.getDate()} ${em} ${end.getFullYear()}`;
+        }
+
+        function changeHebrewMonth(dir) {
+            viewHMonth += dir;
+            const maxMonths = hebrewMonthsInYear(viewHYear);
+            if(viewHMonth > maxMonths) { viewHMonth = 1; viewHYear++; }
+            if(viewHMonth < 1) { viewHYear--; viewHMonth = hebrewMonthsInYear(viewHYear); }
+            buildCalendar();
         }
 
         function goToday() {
-            currentViewDate = new Date(today);
+            viewHYear = todayHeb.year;
+            viewHMonth = todayHeb.month;
             buildCalendar();
-            selectDate(new Date(today));
+            selectHebDate(todayHeb.year, todayHeb.month, todayHeb.day);
         }
 
-        function selectDate(date) {
-            selectedDate = date;
+        function selectHebDate(hy, hm, hd) {
+            selectedHYear = hy;
+            selectedHMonth = hm;
+            selectedHDay = hd;
             buildCalendar();
-            showEntry(date);
+            showEntry(hy, hm, hd);
         }
 
-        function showEntry(date) {
+        // ===== DATA =====
+        const HAYOM_YOM_DATA = {"1-1":{"text":"ראש השנה. תפלת מוסף. בשעת תקיעת שופר יכוון לקבל עליו עול מלכות שמים מחדש."},"1-2":{"text":"יום שני של ראש השנה. ביום זה נברא האדם הראשון. כל הבריאה כולה מצפה לתשובת האדם."},"1-10":{"text":"יום הכיפורים. יום זה הוא קודש קדשים. כל עצמותינו תאמרנה ה׳ מי כמוך."},"1-15":{"text":"סוכות. שמחת בית השואבה. ומי שלא ראה שמחת בית השואבה לא ראה שמחה מימיו."},"2-1":{"text":"ראש חודש חשון. חדש מרחשון נקרא כך על שם המרירות שיש בו, שאין בו שום מועד."},"3-25":{"text":"כה כסלו, יום חמישי של חנוכה. אור חנוכה מאיר את חושך הגלות."},"5-15":{"text":"ט״ו בשבט, ראש השנה לאילנות. ביום זה יוצאים המים החדשים להחיות את האדמה."},"7-14":{"text":"י״ד ניסן, ערב פסח. בדיקת חמץ ובטול חמץ. סיפור יציאת מצרים לבנים."},"7-15":{"text":"ליל הסדר. ׳בכל דור ודור חייב אדם לראות את עצמו כאילו הוא יצא ממצרים׳."},"12-18":{"text":"י״ח אלול, יום הולדת הבעל שם טוב ויום הולדת אדמו״ר הזקן. יום גדול לכל עולם החסידות."}};
+
+        // ===== SHOW ENTRY =====
+        function showEntry(hy, hm, hd) {
             const loader = document.getElementById('loader');
             const emptyState = document.getElementById('emptyState');
             const entryContent = document.getElementById('entryContent');
             loader.style.display = 'block';
             emptyState.style.display = 'none';
             entryContent.style.display = 'none';
+
             setTimeout(() => {
-                const hDate = getHebrewDate(date);
-                const monthName = hebrewMonthName(hDate.year, hDate.month);
-                const hebStr = `${toGematria(hDate.day)} ב${monthName}`;
-                const gregStr = `${DAY_NAMES_HE[date.getDay()]} · ${date.getDate()} ${GREGORIAN_MONTHS_HE[date.getMonth()]} ${date.getFullYear()}`;
+                const monthName = hebrewMonthName(hy, hm);
+                const hebStr = `${toGematria(hd)} ב${monthName}`;
+
+                // Get Gregorian date for this Hebrew date
+                const gregDate = jdnToGregorian(hebrewToJDN(hy, hm, hd));
+                const gregStr = `${DOW_HE[gregDate.getDay()]} · ${gregDate.getDate()} ${GREGORIAN_MONTHS_HE[gregDate.getMonth()]} ${gregDate.getFullYear()}`;
+
                 document.getElementById('entryDateHeb').textContent = hebStr;
                 document.getElementById('entryDateGreg').textContent = gregStr;
-                const entryData = HAYOM_YOM_DATA[hDate.month + '-' + hDate.day];
+
+                // Look up entry by Hebrew month+day
+                // Use non-leap month index for data lookup
+                let dataMonth = hm;
+                // For leap year adar: map adar-bet (month 7 in leap) to month 6 in data
+                const entryData = HAYOM_YOM_DATA[dataMonth + '-' + hd];
                 const entryText = entryData && entryData.text ? entryData.text : '';
+
                 if (entryText) {
                     document.getElementById('entryBody').innerHTML = `<p>${entryText}</p>`;
                 } else {
                     document.getElementById('entryBody').innerHTML = `<p style="color:var(--text-dim);text-align:center;font-size:1rem;line-height:2;opacity:0.6;">המלל ליום זה טרם הוזן<br><span style="font-size:0.8rem;">${hebStr}</span></p>`;
                 }
+
                 document.getElementById('entrySource').textContent = `— היום יום · ${hebStr} —`;
-                document.getElementById('dayCounter').textContent = `${date.getDate()} / ${new Date(date.getFullYear(), date.getMonth()+1, 0).getDate()}`;
-                document.getElementById('btnPrev').disabled = date.getDate() <= 1 && date.getMonth() === 0;
+                document.getElementById('dayCounter').textContent = `${toGematria(hd)} / ${toGematria(hebrewMonthDays(hy, hm))}`;
+
+                // Prev/Next navigation
+                document.getElementById('btnPrev').disabled = (hd <= 1 && hm <= 1);
                 document.getElementById('btnNext').disabled = false;
-                updateMarkReadBtn(date);
+
+                updateMarkReadBtn();
                 loader.style.display = 'none';
                 entryContent.style.display = 'block';
                 entryContent.classList.remove('animate-in');
@@ -954,41 +1113,59 @@
             }, 300);
         }
 
-        function updateMarkReadBtn(date) {
+        function updateMarkReadBtn() {
             const btn = document.getElementById('btnMarkRead');
             const icon = document.getElementById('markReadIcon');
             const text = document.getElementById('markReadText');
-            const read = isRead(date);
+            const read = isReadHeb(selectedHYear, selectedHMonth, selectedHDay);
             btn.className = 'btn-mark-read' + (read ? ' done' : '');
             icon.textContent = read ? '✓' : '☐';
             text.textContent = read ? 'קראתי! (לחץ לביטול)' : 'קראתי';
         }
 
         function toggleRead() {
-            if(!selectedDate) return;
-            toggleReadDate(selectedDate);
-            updateMarkReadBtn(selectedDate);
+            if(selectedHDay == null) return;
+            toggleReadHeb(selectedHYear, selectedHMonth, selectedHDay);
+            updateMarkReadBtn();
             buildCalendar();
         }
 
         function navigateEntry(dir) {
-            if(!selectedDate) return;
-            const d = new Date(selectedDate);
-            d.setDate(d.getDate() + dir);
-            selectedDate = d;
-            currentViewDate = new Date(d);
+            if(selectedHDay == null) return;
+            let hy = selectedHYear, hm = selectedHMonth, hd = selectedHDay + dir;
+            const maxDays = hebrewMonthDays(hy, hm);
+            if(hd > maxDays) {
+                hm++;
+                const maxMonths = hebrewMonthsInYear(hy);
+                if(hm > maxMonths) { hy++; hm = 1; }
+                hd = 1;
+            }
+            if(hd < 1) {
+                hm--;
+                if(hm < 1) { hy--; hm = hebrewMonthsInYear(hy); }
+                hd = hebrewMonthDays(hy, hm);
+            }
+            selectedHYear = hy;
+            selectedHMonth = hm;
+            selectedHDay = hd;
+            viewHYear = hy;
+            viewHMonth = hm;
             buildCalendar();
-            showEntry(d);
+            showEntry(hy, hm, hd);
         }
 
         function shareToWhatsapp() {
-            const dateStr = selectedDate ? `יום ${selectedDate.getDate()} ${GREGORIAN_MONTHS_HE[selectedDate.getMonth()]}` : 'היום יום';
+            let dateStr = 'היום יום';
+            if(selectedHDay != null) {
+                dateStr = `${toGematria(selectedHDay)} ${hebrewMonthName(selectedHYear, selectedHMonth)}`;
+            }
             const text = `מזמין אותך לקרוא היום יום: ${dateStr}\n${window.location.href}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
         }
 
+        // ===== INIT =====
         buildCalendar();
-        selectDate(new Date(today));
+        selectHebDate(todayHeb.year, todayHeb.month, todayHeb.day);
     </script>
 </body>
 </html>
