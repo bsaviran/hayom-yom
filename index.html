@@ -524,15 +524,7 @@
             opacity: 0.7;
         }
 
-        .day-card.read-mark::after {
-            content: '✓';
-            position: absolute;
-            bottom: 3px;
-            right: 5px;
-            font-size: 0.5rem;
-            color: #4ade80;
-            z-index: 2;
-        }
+
 
         /* === CONTENT CARD === */
         .content-card {
@@ -616,28 +608,7 @@
             font-style: italic;
         }
 
-        .mark-read-wrap {
-            text-align: center;
-            margin-top: 2.5rem;
-        }
 
-        .btn-mark-read {
-            background: var(--navy-mid);
-            border: 1.5px solid rgba(201,168,76,0.3);
-            border-radius: 50px;
-            color: var(--text-dim);
-            font-family: 'Noto Serif Hebrew', serif;
-            font-size: 1rem;
-            padding: 12px 28px;
-            cursor: pointer;
-            transition: all 0.25s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .btn-mark-read:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
-        .btn-mark-read.done { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.5); color: #4ade80; }
-        .btn-mark-read.done:hover { background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.4); color: #f87171; }
 
         .day-nav {
             display: flex;
@@ -805,12 +776,7 @@
                     </div>
                     <div class="entry-body" id="entryBody"></div>
                     <div class="entry-source" id="entrySource"></div>
-                    <div class="mark-read-wrap">
-                        <button class="btn-mark-read" id="btnMarkRead" onclick="toggleRead()">
-                            <span id="markReadIcon">☐</span>
-                            <span id="markReadText">קראתי</span>
-                        </button>
-                    </div>
+
                     <div class="day-nav">
                         <button class="nav-btn" id="btnPrev" onclick="navigateEntry(-1)">הקודם ◀</button>
                         <span class="day-counter" id="dayCounter"></span>
@@ -931,19 +897,7 @@
         let selectedHMonth = null;
         let selectedHDay = null;
 
-        const readKey = 'hayomyom_read';
-        function getReadSet() {
-            try { return new Set(JSON.parse(localStorage.getItem(readKey)||'[]')); }
-            catch { return new Set(); }
-        }
-        function hebDateKey(hy, hm, hd) { return `${hy}-${hm}-${hd}`; }
-        function isReadHeb(hy, hm, hd) { return getReadSet().has(hebDateKey(hy, hm, hd)); }
-        function toggleReadHeb(hy, hm, hd) {
-            const s = getReadSet();
-            const k = hebDateKey(hy, hm, hd);
-            if(s.has(k)) s.delete(k); else s.add(k);
-            localStorage.setItem(readKey, JSON.stringify([...s]));
-        }
+
 
         // ===== BUILD CALENDAR =====
         function buildCalendar() {
@@ -991,13 +945,11 @@
                 const gregDate = jdnToGregorian(hebrewToJDN(hYear, hMonth, d));
                 const isToday = hYear===todayHeb.year && hMonth===todayHeb.month && d===todayHeb.day;
                 const isSelected = hYear===selectedHYear && hMonth===selectedHMonth && d===selectedHDay;
-                const read = isReadHeb(hYear, hMonth, d);
 
                 const card = document.createElement('div');
                 card.className = 'day-card' +
                     (isToday ? ' today' : '') +
-                    (isSelected ? ' selected' : '') +
-                    (read ? ' read-mark' : '');
+                    (isSelected ? ' selected' : '');
 
                 const gregLabel = `${gregDate.getDate()}/${gregDate.getMonth()+1}`;
 
@@ -1052,19 +1004,66 @@
             selectHebDate(todayHeb.year, todayHeb.month, todayHeb.day);
         }
 
-        function selectHebDate(hy, hm, hd) {
+        async function selectHebDate(hy, hm, hd) {
             selectedHYear = hy;
             selectedHMonth = hm;
             selectedHDay = hd;
             buildCalendar();
-            showEntry(hy, hm, hd);
+            await showEntry(hy, hm, hd);
         }
 
-        // ===== DATA =====
-        const HAYOM_YOM_DATA = {"1-1":{"text":"ראש השנה. תפלת מוסף. בשעת תקיעת שופר יכוון לקבל עליו עול מלכות שמים מחדש."},"1-2":{"text":"יום שני של ראש השנה. ביום זה נברא האדם הראשון. כל הבריאה כולה מצפה לתשובת האדם."},"1-10":{"text":"יום הכיפורים. יום זה הוא קודש קדשים. כל עצמותינו תאמרנה ה׳ מי כמוך."},"1-15":{"text":"סוכות. שמחת בית השואבה. ומי שלא ראה שמחת בית השואבה לא ראה שמחה מימיו."},"2-1":{"text":"ראש חודש חשון. חדש מרחשון נקרא כך על שם המרירות שיש בו, שאין בו שום מועד."},"3-25":{"text":"כה כסלו, יום חמישי של חנוכה. אור חנוכה מאיר את חושך הגלות."},"5-15":{"text":"ט״ו בשבט, ראש השנה לאילנות. ביום זה יוצאים המים החדשים להחיות את האדמה."},"7-14":{"text":"י״ד ניסן, ערב פסח. בדיקת חמץ ובטול חמץ. סיפור יציאת מצרים לבנים."},"7-15":{"text":"ליל הסדר. ׳בכל דור ודור חייב אדם לראות את עצמו כאילו הוא יצא ממצרים׳."},"12-18":{"text":"י״ח אלול, יום הולדת הבעל שם טוב ויום הולדת אדמו״ר הזקן. יום גדול לכל עולם החסידות."}};
+        // ===== SEFARIA API =====
+        // Cache so we don't re-fetch the same entry
+        const entryCache = {};
+
+        // Sefaria uses a sequential day number (1–365/366) for Hayom Yom.
+        // We compute the day-of-year in the Hebrew year.
+        function hebrewDayOfYear(hy, hm, hd) {
+            let day = 0;
+            for (let m = 1; m < hm; m++) day += hebrewMonthDays(hy, m);
+            return day + hd;
+        }
+
+        async function fetchSefariaEntry(hy, hm, hd) {
+            const cacheKey = `${hy}-${hm}-${hd}`;
+            if (entryCache[cacheKey] !== undefined) return entryCache[cacheKey];
+
+            const dayNum = hebrewDayOfYear(hy, hm, hd);
+            const url = `https://www.sefaria.org/api/texts/Hayom_Yom.${dayNum}?lang=he&commentary=0`;
+
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Network error');
+                const data = await res.json();
+
+                // Sefaria returns Hebrew text in data.he (array of strings or nested)
+                let text = '';
+                if (Array.isArray(data.he)) {
+                    // Flatten nested arrays
+                    text = flattenSefariaText(data.he);
+                } else if (typeof data.he === 'string') {
+                    text = data.he;
+                }
+
+                // Strip HTML tags from Sefaria response
+                text = text.replace(/<[^>]*>/g, '').trim();
+
+                entryCache[cacheKey] = text || null;
+                return entryCache[cacheKey];
+            } catch (e) {
+                console.warn('Sefaria fetch failed:', e);
+                entryCache[cacheKey] = null;
+                return null;
+            }
+        }
+
+        function flattenSefariaText(arr) {
+            if (!Array.isArray(arr)) return arr || '';
+            return arr.map(item => flattenSefariaText(item)).filter(Boolean).join('\n');
+        }
 
         // ===== SHOW ENTRY =====
-        function showEntry(hy, hm, hd) {
+        async function showEntry(hy, hm, hd) {
             const loader = document.getElementById('loader');
             const emptyState = document.getElementById('emptyState');
             const entryContent = document.getElementById('entryContent');
@@ -1072,65 +1071,47 @@
             emptyState.style.display = 'none';
             entryContent.style.display = 'none';
 
-            setTimeout(() => {
-                const monthName = hebrewMonthName(hy, hm);
-                const hebStr = `${toGematria(hd)} ב${monthName}`;
+            const monthName = hebrewMonthName(hy, hm);
+            const hebStr = `${toGematria(hd)} ב${monthName}`;
+            const gregDate = jdnToGregorian(hebrewToJDN(hy, hm, hd));
+            const gregStr = `${DOW_HE[gregDate.getDay()]} · ${gregDate.getDate()} ${GREGORIAN_MONTHS_HE[gregDate.getMonth()]} ${gregDate.getFullYear()}`;
 
-                // Get Gregorian date for this Hebrew date
-                const gregDate = jdnToGregorian(hebrewToJDN(hy, hm, hd));
-                const gregStr = `${DOW_HE[gregDate.getDay()]} · ${gregDate.getDate()} ${GREGORIAN_MONTHS_HE[gregDate.getMonth()]} ${gregDate.getFullYear()}`;
+            document.getElementById('entryDateHeb').textContent = hebStr;
+            document.getElementById('entryDateGreg').textContent = gregStr;
 
-                document.getElementById('entryDateHeb').textContent = hebStr;
-                document.getElementById('entryDateGreg').textContent = gregStr;
+            // Fetch from Sefaria
+            const entryText = await fetchSefariaEntry(hy, hm, hd);
 
-                // Look up entry by Hebrew month+day
-                // Use non-leap month index for data lookup
-                let dataMonth = hm;
-                // For leap year adar: map adar-bet (month 7 in leap) to month 6 in data
-                const entryData = HAYOM_YOM_DATA[dataMonth + '-' + hd];
-                const entryText = entryData && entryData.text ? entryData.text : '';
+            if (entryText) {
+                // Split into paragraphs on newlines
+                const paragraphs = entryText.split('\n').filter(p => p.trim());
+                document.getElementById('entryBody').innerHTML =
+                    paragraphs.map(p => `<p style="margin-bottom:1.2rem">${p}</p>`).join('');
+            } else {
+                document.getElementById('entryBody').innerHTML =
+                    `<p style="color:var(--text-dim);text-align:center;font-size:1rem;line-height:2;opacity:0.6;">
+                        לא נמצא תוכן ליום זה<br>
+                        <span style="font-size:0.75rem;">נסה לבדוק חיבור לאינטרנט</span>
+                    </p>`;
+            }
 
-                if (entryText) {
-                    document.getElementById('entryBody').innerHTML = `<p>${entryText}</p>`;
-                } else {
-                    document.getElementById('entryBody').innerHTML = `<p style="color:var(--text-dim);text-align:center;font-size:1rem;line-height:2;opacity:0.6;">המלל ליום זה טרם הוזן<br><span style="font-size:0.8rem;">${hebStr}</span></p>`;
-                }
+            document.getElementById('entrySource').textContent = `— היום יום · ${hebStr} —`;
+            document.getElementById('dayCounter').textContent = `${toGematria(hd)} / ${toGematria(hebrewMonthDays(hy, hm))}`;
+            document.getElementById('btnPrev').disabled = (hd <= 1 && hm <= 1);
+            document.getElementById('btnNext').disabled = false;
 
-                document.getElementById('entrySource').textContent = `— היום יום · ${hebStr} —`;
-                document.getElementById('dayCounter').textContent = `${toGematria(hd)} / ${toGematria(hebrewMonthDays(hy, hm))}`;
 
-                // Prev/Next navigation
-                document.getElementById('btnPrev').disabled = (hd <= 1 && hm <= 1);
-                document.getElementById('btnNext').disabled = false;
-
-                updateMarkReadBtn();
-                loader.style.display = 'none';
-                entryContent.style.display = 'block';
-                entryContent.classList.remove('animate-in');
-                void entryContent.offsetWidth;
-                entryContent.classList.add('animate-in');
-                document.getElementById('contentCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 300);
+            loader.style.display = 'none';
+            entryContent.style.display = 'block';
+            entryContent.classList.remove('animate-in');
+            void entryContent.offsetWidth;
+            entryContent.classList.add('animate-in');
+            document.getElementById('contentCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        function updateMarkReadBtn() {
-            const btn = document.getElementById('btnMarkRead');
-            const icon = document.getElementById('markReadIcon');
-            const text = document.getElementById('markReadText');
-            const read = isReadHeb(selectedHYear, selectedHMonth, selectedHDay);
-            btn.className = 'btn-mark-read' + (read ? ' done' : '');
-            icon.textContent = read ? '✓' : '☐';
-            text.textContent = read ? 'קראתי! (לחץ לביטול)' : 'קראתי';
-        }
 
-        function toggleRead() {
-            if(selectedHDay == null) return;
-            toggleReadHeb(selectedHYear, selectedHMonth, selectedHDay);
-            updateMarkReadBtn();
-            buildCalendar();
-        }
 
-        function navigateEntry(dir) {
+        async function navigateEntry(dir) {
             if(selectedHDay == null) return;
             let hy = selectedHYear, hm = selectedHMonth, hd = selectedHDay + dir;
             const maxDays = hebrewMonthDays(hy, hm);
@@ -1151,7 +1132,7 @@
             viewHYear = hy;
             viewHMonth = hm;
             buildCalendar();
-            showEntry(hy, hm, hd);
+            await showEntry(hy, hm, hd);
         }
 
         function shareToWhatsapp() {
