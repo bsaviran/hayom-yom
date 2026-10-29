@@ -174,6 +174,20 @@
         }
         .animate-in { animation: fadeIn 0.5s ease forwards; }
 
+        /* חשיפה בגלילה – האלמנט "קופץ" פנימה כשהוא נכנס למסך */
+        .reveal {
+            opacity: 0;
+            transform: translateY(48px) scale(0.96);
+            transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .reveal.revealed { opacity: 1; transform: none; }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: translateY(14px) scale(0.85); }
+            to { opacity: 1; transform: none; }
+        }
+        .day-card.pop-in { animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards; }
+
         /* === RABBI TRIBUTE === */
         .rabbi-center {
             display: flex;
@@ -737,9 +751,9 @@
             </div>
         </div>
 
-        <div class="ornament-divider animate-in"><span>✦ ✦ ✦</span></div>
+        <div class="ornament-divider"><span>✦ ✦ ✦</span></div>
 
-        <div class="animate-in">
+        <div id="calendarSection">
 
             <div class="month-nav">
                 <button class="month-nav-btn" onclick="changeHebrewMonth(-1)">◀</button>
@@ -824,11 +838,14 @@
         }
         function hebrewYearStart(y) { return hebrewElapsed(y)+347997; }
         function hebrewMonthDays(y, m) {
-            if([2,4,6,10,13].includes(m)) return 29;
-            if(m===12&&!hebrewIsLeap(y)) return 29;
-            if(m===8&&(hebrewElapsed(y+1)-hebrewElapsed(y))%10!==5) return 29;
-            if(m===9&&(hebrewElapsed(y+1)-hebrewElapsed(y))%10===3) return 29;
-            return 30;
+            // חודשים ממוספרים מתשרי=1
+            const yearDays = hebrewElapsed(y+1) - hebrewElapsed(y);
+            if(m===2) return yearDays%10===5 ? 30 : 29;   // חשון: 30 רק בשנה שלמה
+            if(m===3) return yearDays%10===3 ? 29 : 30;   // כסלו: 29 רק בשנה חסרה
+            if(m===6&&hebrewIsLeap(y)) return 30;         // אדר א׳
+            // משאר החודשים מתחלפים 30/29; בשנה מעוברת אדר ב׳ ואילך מוסטים ב-1
+            const k = hebrewIsLeap(y)&&m>=7 ? m-1 : m;
+            return k%2===0 ? 29 : 30;
         }
         function hebrewMonthsInYear(y) { return hebrewIsLeap(y) ? 13 : 12; }
         function dateToJDN(gYear, gMonth, gDay) {
@@ -1005,12 +1022,12 @@
             selectHebDate(todayHeb.year, todayHeb.month, todayHeb.day);
         }
 
-        async function selectHebDate(hy, hm, hd) {
+        async function selectHebDate(hy, hm, hd, scroll = true) {
             selectedHYear = hy;
             selectedHMonth = hm;
             selectedHDay = hd;
             buildCalendar();
-            await showEntry(hy, hm, hd);
+            await showEntry(hy, hm, hd, scroll);
         }
 
         // ===== נתונים מקומיים =====
@@ -1402,17 +1419,9 @@
             "6-18": "\u05d1\u05d1\u05e8\u05db\u05d4 \u05de\u05e2\u05d9\u05df \u05e9\u05dc\u05e9 \u05d0\u05dd \u05e9\u05ea\u05d4 \u05d9\u05d9\u05df \u05d5\u05d0\u05db\u05dc \u05e4\u05d9\u05e8\u05d5\u05ea \u05de\u05d6' \u05d4\u05de\u05d9\u05e0\u05d9\u05dd, \u05d7\u05d5\u05ea\u05dd: \"\u05d5\u05e2\u05dc \u05e4\u05e8\u05d9 \u05d4\u05d2\u05e4\u05df \u05d5\u05e2\u05dc \u05d4\u05e4\u05d9\u05e8\u05d5\u05ea, \u05d1\u05e8\u05d5\u05da \u05d0\u05ea\u05d4 \u05d4' \u05e2\u05dc \u05e4\u05e8\u05d9 \u05d4\u05d2\u05e4\u05df \u05d5\u05d4\u05e4\u05d9\u05e8\u05d5\u05ea\" (\u05d5\u05dc\u05d0 \u05dc\u05d4\u05d5\u05e1\u05d9\u05e3 \u05d2\u05dd \u05d1\u05e1\u05d9\u05d5\u05dd: \"\u05d5\u05e2\u05dc\" \u05d4\u05e4\u05d9\u05e8\u05d5\u05ea).",
         };
 
-        // ===== SEFARIA API =====
-        const entryCache = {};
-
-        function hebrewDayOfYear(hy, hm, hd) {
-            let day = 0;
-            for (let m = 1; m < hm; m++) day += hebrewMonthDays(hy, m);
-            return day + hd;
-        }
-
-        async function fetchSefariaEntry(hy, hm, hd) {
-            // בדוק קודם בנתונים המקומיים (מפתח: חודש-יום ללא שנה)
+        // ===== DAILY ENTRY =====
+        function getLocalEntry(hy, hm, hd) {
+            // מפתח: חודש-יום ללא שנה
             // LOCAL_DATA נשמר לפי שנה רגילה: תשרי=1...אדר=6,ניסן=7...אלול=12
             // בשנה מעוברת: אדר ב'=7, ניסן=8...אלול=13 — ממפים אחורה ב-1 מחודש 7
             const isLeap = hebrewIsLeap(hy);
@@ -1426,47 +1435,11 @@
             } else {
                 localKey = `${hm}-${hd}`;
             }
-            if (LOCAL_DATA[localKey]) return LOCAL_DATA[localKey];
-
-            const cacheKey = `${hy}-${hm}-${hd}`;
-            if (entryCache[cacheKey] !== undefined) return entryCache[cacheKey];
-
-            const dayNum = hebrewDayOfYear(hy, hm, hd);
-            const url = `https://www.sefaria.org/api/texts/Hayom_Yom.${dayNum}?lang=he&commentary=0`;
-
-            try {
-                const res = await fetch(url);
-                if (!res.ok) throw new Error('Network error');
-                const data = await res.json();
-
-                // Sefaria returns Hebrew text in data.he (array of strings or nested)
-                let text = '';
-                if (Array.isArray(data.he)) {
-                    // Flatten nested arrays
-                    text = flattenSefariaText(data.he);
-                } else if (typeof data.he === 'string') {
-                    text = data.he;
-                }
-
-                // Strip HTML tags from Sefaria response
-                text = text.replace(/<[^>]*>/g, '').trim();
-
-                entryCache[cacheKey] = text || null;
-                return entryCache[cacheKey];
-            } catch (e) {
-                console.warn('Sefaria fetch failed:', e);
-                entryCache[cacheKey] = null;
-                return null;
-            }
-        }
-
-        function flattenSefariaText(arr) {
-            if (!Array.isArray(arr)) return arr || '';
-            return arr.map(item => flattenSefariaText(item)).filter(Boolean).join('\n');
+            return LOCAL_DATA[localKey] || null;
         }
 
         // ===== SHOW ENTRY =====
-        async function showEntry(hy, hm, hd) {
+        async function showEntry(hy, hm, hd, scroll = true) {
             const loader = document.getElementById('loader');
             const emptyState = document.getElementById('emptyState');
             const entryContent = document.getElementById('entryContent');
@@ -1482,8 +1455,7 @@
             document.getElementById('entryDateHeb').textContent = hebStr;
             document.getElementById('entryDateGreg').textContent = gregStr;
 
-            // Fetch from Sefaria
-            const entryText = await fetchSefariaEntry(hy, hm, hd);
+            const entryText = getLocalEntry(hy, hm, hd);
 
             if (entryText) {
                 // Split into paragraphs on newlines
@@ -1493,8 +1465,7 @@
             } else {
                 document.getElementById('entryBody').innerHTML =
                     `<p style="color:var(--text-dim);text-align:center;font-size:1rem;line-height:2;opacity:0.6;">
-                        לא נמצא תוכן ליום זה<br>
-                        <span style="font-size:0.75rem;">נסה לבדוק חיבור לאינטרנט</span>
+                        לא נמצא תוכן ליום זה
                     </p>`;
             }
 
@@ -1509,7 +1480,7 @@
             entryContent.classList.remove('animate-in');
             void entryContent.offsetWidth;
             entryContent.classList.add('animate-in');
-            document.getElementById('contentCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (scroll) document.getElementById('contentCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
 
@@ -1549,7 +1520,30 @@
 
         // ===== INIT =====
         buildCalendar();
-        selectHebDate(todayHeb.year, todayHeb.month, todayHeb.day);
+        selectHebDate(todayHeb.year, todayHeb.month, todayHeb.day, false);
+
+        // ===== חשיפה בגלילה =====
+        (function () {
+            if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('revealed');
+                    if (entry.target.id === 'calendarSection') {
+                        // ימי הלוח קופצים אחד אחרי השני
+                        entry.target.querySelectorAll('.day-card').forEach((card, i) => {
+                            card.style.animationDelay = `${0.2 + i * 0.02}s`;
+                            card.classList.add('pop-in');
+                        });
+                    }
+                    observer.unobserve(entry.target);
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+            document.querySelectorAll('main > .ornament-divider, #calendarSection, #contentCard, footer').forEach(el => {
+                el.classList.add('reveal');
+                observer.observe(el);
+            });
+        })();
     </script>
 </body>
 </html>
